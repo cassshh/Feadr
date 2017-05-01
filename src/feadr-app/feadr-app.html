@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="feadr-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class FeadrApp extends Polymer.Element {
+      static get is() { return 'feadr-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'feadr-app'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(FeadrApp.is, FeadrApp);
+  </script>
+</dom-module>
