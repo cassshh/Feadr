@@ -55,13 +55,25 @@
         margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
         line-height: 1.5;
-        min-height: 100vh;
         color: #eeeeee;
         background-color: #313131;
+      }
+      .noscript {
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .noscript h1, .noscript h3 {
+        margin: 20px 50px 0 50px;
+        letter-spacing: 0.1em;
       }
     </style>
   </head>
   <body>
     <feadr-app></feadr-app>
+    <noscript class="noscript">
+        <h1>You have JavaScript disabled :(</h1>
+        <h3>Please enable JavaScript to use this website</h3>
+    </noscript>
   </body>
 </html>
