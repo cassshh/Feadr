@@ -13,10 +13,14 @@ node_js:
 #- '5'
 #- '4'
 before_script:
-- npm install -g bower polymer-cli
+- npm install -g bower polymer-cli@next
 - bower install
 script:
 - xvfb-run npm test
+- polymer build --bundle --js-minify --css-minify --html-minify
+after_success:
+- chmod +x deploy.sh
+- ./deploy.sh feadr-a4508
 notifications:
   slack:
     secure: qUXgmTrrQ8uJpIDHfOXYGr8qwaFsDUTghyK9VQfiFBZs+yODxSGPMdAgTV0tza4VOt0TDi6opk4SgP8w2WZdyJaWHKUnaHcpK3CbpnN9+eZ3Rh0ySr6cBPzW8VTWwzm8IiEj6GzuNxsNXMU8pCWuUujJKH3/5cucxc83oYIfFJsE5DP1GQxNIagNqaCbcXzMdwPH1v4lhc9snCinj9mSIJHI/STTm5yioO5441hkePxHPGkJuFEzSbVAqPkOAPLcljdT5jNL8hwr9UdnsELUC+aDvBOHVzUzWxAPY4aal2emt5M3yp01RJpT4wf41uCiv4OZyLknlGseISDYODS6pQqqvc5f/IkanZ44RCHm5Cogl+5vitrmF48mhO/+TNmeU94CBXX1RDRkBvTh2nJ2/fWIHL2SzowsLVex8HVQfO2h1AKb4BrmfBIDCYM1spPoUggGRuvcP9HNamWZ/T4vbp9DLh870D3pBeJrm1or0Y+hTs2JXE+Bg66VuUr/MoMHzFV0BTajj9hcWsSLnuBfjpWmh6BO21TuJZVcU2SWaFl0Ud6Rqghx+NLxxoSVp7FSsrThIOJl+3qo4+ZCmhw0D2oGHA55seXvqWG5tcvsn0mQV7M/Tg2NX2S8Wjvb7gHEL1hfz754ExcRyi5MZP5gQhCN36wV//KnB4l3oBaMtYk=
