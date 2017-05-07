@@ -20,7 +20,7 @@ script:
 - polymer build --bundle --js-minify --css-minify --html-minify
 after_success:
 - chmod +x deploy.sh
-- ./deploy.sh feadr-a4508
+- ./deploy.sh
 notifications:
   email: false
   slack:
