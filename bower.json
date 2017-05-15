@@ -6,7 +6,9 @@
     "Project Salt"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0-rc.3"
+    "polymer": "Polymer/polymer#^2.0.0-rc.3",
+    "paper-input": "PolymerElements/paper-input#2.0-preview",
+    "paper-button": "PolymerElements/paper-button#2.0-preview"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0-prerelease.5",
