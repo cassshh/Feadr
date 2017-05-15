@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+
+<dom-module id="feadr-add-post">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            #addPost {
+                width: 25%;
+            }
+            #submit-btn {
+                background-color: #544274;
+            }
+        </style>
+        <div id="addPost">
+            <paper-input id="title" label="Title" char-counter maxlength="140"></paper-input>
+
+            <paper-textarea id="text" label="Text" char-counter></paper-textarea>
+
+            <paper-button id="submit-btn">Submit</paper-button>
+        </div>
+    </template>
+
+    <script>
+        /** @polymerElement */
+        class FeadrAddPost extends Polymer.Element {
+            static get is() { return 'feadr-add-post'; }
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'feadr-add-post',
+                    },
+                };
+            }
+        }
+
+        window.customElements.define(FeadrAddPost.is, FeadrAddPost);
+    </script>
+</dom-module>
