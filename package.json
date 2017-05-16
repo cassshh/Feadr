@@ -7,8 +7,7 @@
   },
   "scripts": {
     "lint": "eslint . --ext js,html --ignore-path .gitignore",
-    "test": "npm run lint && polymer test",
-    "genfbconf": "cd travis_scripts/ && ./firebase_generate_config.sh && mv generated_config.js ../scripts/config.js && cd .."
+    "test": "npm run lint && polymer test"
   },
   "private": true
 }
