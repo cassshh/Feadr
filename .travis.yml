@@ -16,7 +16,10 @@ before_script:
 - npm install -g bower polymer-cli@next firebase-tools
 - bower install
 script:
-- ./travis_scripts/firebase_generate_config.sh
+- cd /travis_scripts
+- ./firebase_generate_config.sh
+- mv generated_config.js ../scripts/config.js
+- cd ..
 - xvfb-run npm test
 - polymer build --bundle --js-minify --css-minify --html-minify
 after_success:

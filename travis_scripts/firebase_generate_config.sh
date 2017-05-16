@@ -23,4 +23,4 @@ else
     set_dev_env
 fi
 
-./firebase_template_config APIKEY PROJECTID MESSAGINGID > ../scripts/config.js
+./firebase_template_config APIKEY PROJECTID MESSAGINGID > generated_config.js
