@@ -15,13 +15,13 @@ set_dev_env () {
 }
 
 if [ $TRAVIS_BRANCH == "master" ]; then
-    echo "# Production env..."
+    echo "// Production env..."
     set_prod_env
 elif [ $TRAVIS_BRANCH == "develop" ]; then
-    echo "# Develop env..."
+    echo "// Develop env..."
     set_dev_env
 else
-    echo "# No special env... jic going for Develop"
+    echo "// No special env... jic going for Develop"
     set_dev_env
 fi
 
