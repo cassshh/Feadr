@@ -49,6 +49,21 @@
     <!-- Load application shell -->
     <link rel="import" href="/src/feadr-app/feadr-app.html">
 
+    <!--Load firebase script. -->
+    <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyB1GZh0qpIF_JIcK7YKRE4OpmBd71jW2IM",
+            authDomain: "feadr-develop.firebaseapp.com",
+            databaseURL: "https://feadr-develop.firebaseio.com",
+            projectId: "feadr-develop",
+            storageBucket: "feadr-develop.appspot.com",
+            messagingSenderId: "962176888704"
+        };
+        firebase.initializeApp(config);
+    </script>
+
     <!-- Add any global styles for body, document, etc. -->
     <style>
       body {
