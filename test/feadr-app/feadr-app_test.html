@@ -35,8 +35,9 @@
           assert.equal(elementHeader.innerHTML, 'Hello feadr-app!');
         });
 
-        test('setting a property on the element works', function() {
+         test('setting a property on the element works', function() {
           // Create a test fixture
+          // NO
           var element = fixture('ChangedPropertyTestFixture');
           assert.equal(element.prop1, 'new-prop1');
           var elementShadowRoot = element.shadowRoot;
