@@ -12,6 +12,16 @@
                 margin-top: 10px;
             }
 
+            .card {
+                max-width: 800px;
+
+                padding-top: 10px;
+                color: black;
+                background-color: #F1F2F3;
+                font-weight: 300;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+
             .commentContainer {
                 background-color: #F1F2F3;
                 display: block;
@@ -46,14 +56,17 @@
                 text-align: left;
             }
         </style>
-        <div class="commentContainer">
-            <div class="comment">
-                <div class="input">
-                    <paper-textarea label="Leave a comment"></paper-textarea>
-                </div>
-                <div class="commentBtnContainer">
-                    <paper-ripple></paper-ripple>
-                    <img class="sendIcon" alt="SendIcon" src="../../images/manifest/send_white.svg"/>
+
+        <div class="card">
+            <div class="commentContainer">
+                <div class="comment">
+                    <div class="input">
+                        <paper-textarea no-label-float id="textarea" label="Leave a comment"></paper-textarea>
+                    </div>
+                    <div class="commentBtnContainer" on-click="_postComment">
+                        <paper-ripple></paper-ripple>
+                        <img class="sendIcon" alt="SendIcon" src="../../images/manifest/send_white.svg"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,6 +86,22 @@
                         value: 'feadr-add-comment',
                     },
                 };
+            }
+
+            _postComment() {
+                var that = this;
+                // eslint-disable-next-line
+                const commentref = firebase.database().ref('comments/posts/postpushkey1/');
+                var newComment = commentref.push();
+                if (this.$.textarea.value != undefined) {
+                    newComment.set({
+                        text: that.$.textarea.value,
+                        user: 'DevelopUser',
+                        upVotes: 0,
+                    });
+                    that.$.textarea.value = null;
+                    that.$.textarea.label = 'Leave a comment';
+                }
             }
         }
 

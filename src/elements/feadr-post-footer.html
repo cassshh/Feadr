@@ -44,7 +44,7 @@
         <div class="footer">
             <div class="icons">
                 <div class="upvote"><iron-icon icon="arrow-upward"></iron-icon>1337</div>
-                <div class="comments"><iron-icon icon="editor:mode-comment"></iron-icon>22</div>
+                <div class="comments"><iron-icon icon="editor:mode-comment"></iron-icon>[[totalComments]]</div>
                 <div class="views"><iron-icon icon="visibility"></iron-icon>3333333</div>
             </div>
         </div>
@@ -59,12 +59,12 @@
 
             static get properties() {
                 return {
-                    prop1: {
-                        type: String,
-                        value: 'cunt',
+                    totalComments: {
+                        type: Number,
                     },
                 };
             }
+
         }
 
         window.customElements.define(FeadrPostFooter.is, FeadrPostFooter);

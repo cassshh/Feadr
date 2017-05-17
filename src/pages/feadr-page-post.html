@@ -54,7 +54,7 @@
 
         </style>
         <app-header-layout>
-            <app-header>
+            <app-header slot="header" condenses fixed effects="waterfall">
                 <app-toolbar>
                     <!-- Left icon -->
                     <paper-icon-button icon="arrow-back"></paper-icon-button>
@@ -74,16 +74,16 @@
                     <feadr-post-details></feadr-post-details>
                     <!-- TODO repeat for amount of sections-->
                     <feadr-post-section></feadr-post-section>
-                    <feadr-post-footer></feadr-post-footer>
+                    <feadr-post-footer total-comments="[[totalComments]]"></feadr-post-footer>
                 </div>
                 <div class="postComment">
                     <feadr-add-comment></feadr-add-comment>
                 </div>
                 <div class="comments">
                     <!-- TODO Uncomment template when comments are queried from database -->
-                    <!--<template is="dom-repeat" item="{{comment}}">-->
-                    <feadr-comment></feadr-comment>
-                    <!--</template>-->
+                    <template is="dom-repeat" items="{{key}}" as="key">
+                     <feadr-comment key="[[key]]"></feadr-comment>
+                    </template>
                 </div>
             </div>
         </app-header-layout>
@@ -98,14 +98,40 @@
 
             static get properties() {
                 return {
-                    prop1: {
-                        type: String,
-                        value: 'cunt',
+                    key: {
+                        type: Array,
+                    },
+
+                    totalComments: {
+                        type: Number,
                     },
                 };
             }
-        }
 
+            ready() {
+                super.ready();
+                this.getData();
+            }
+
+            getData() {
+                this.getComments();
+            }
+
+            getComments() {
+                var that = this;
+                // eslint-disable-next-line
+                var commentsRef = firebase.database().ref('comments/posts/postpushkey1/');
+                commentsRef.on('value', function(snapshot) {
+                    that.key = [];
+                    if (snapshot.val() !== null) {
+                        snapshot.forEach(function(childSnapshot) {
+                            that.push('key', childSnapshot.key);
+                            that.totalComments = that.key.length;
+                        });
+                    }
+                });
+            }
+        }
         window.customElements.define(FeadrPost.is, FeadrPost);
     </script>
 </dom-module>
