@@ -1,0 +1,179 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<dom-module id="feadr-comment">
+    <template>
+        <style>
+            :host {
+                display: block;
+                margin-top: 16px;
+            }
+
+            .card {
+                max-width: 800px;
+                color: black;
+                background-color: #F1F2F3;
+                font-weight: 300;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Comment Header */
+            .commentHeader {
+                width: 100%;
+                display: table;
+            }
+
+            .userName {
+                width: 70%;
+                display: table-cell;
+                padding-left: 13px;
+                padding-top: 13px;
+                font-size: 13px;
+                font-weight: 800;
+                font-family: 'Open Sans', sans-serif;
+                color: #834D9B;
+            }
+
+            .timePost {
+                width: 30%;
+                display: table-cell;
+                text-align: right;
+                padding-right: 13px;
+                padding-top: 13px;
+                font-size: 10px;
+                font-weight: 600;
+                opacity: 0.54;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
+            }
+
+            .text {
+                width: 100%;
+                padding-left: 10px;
+                font-size: 13px;
+                font-weight: 600;
+                opacity: 0.84;
+                text-align: justify;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
+            }
+
+            .commentFooter {
+                width: 100%;
+                display: inline-block;
+                padding: 10px;
+            }
+
+            .leftActions {
+                display: inline-block;
+                text-align:justify;
+                text-align-last:center;
+                width: 30%;
+            }
+
+            .centerActions {
+                display: inline-block;
+                text-align:justify;
+                text-align-last:center;
+                width: 40%;
+            }
+
+            .rightActions {
+                display: inline-block;
+                text-align: justify;
+                text-align-last: center;
+                width: 25%;
+            }
+
+
+            .votes, .subComments, .expand, .respondButton, .moreButton, .upvoteButton, .downvoteButton  {
+                display: inline-block;
+                margin-right: 15px;
+            }
+
+            iron-icon{
+                height: 12px;
+                width: 12px;
+                margin-bottom: 2px;
+                margin-right: 4px;
+                opacity: 0.84;
+                color: #000000;
+            }
+
+            .sideIcon {
+                height: 20px;
+                width: 20px;
+                margin-bottom: 2px;
+                margin-right: 4px;
+                opacity: 0.84;
+                color: #000000;
+            }
+        </style>
+
+        <div class="card">
+            <div class="commentHeader">
+                <div class="userName">
+                    Jesper Strating
+                </div>
+                <div class="timePost">
+                    6h ago
+                </div>
+            </div>
+            <div class="text">
+                Dit is echt een slechte post.
+            </div>
+            <div class="commentFooter">
+                <div class="leftActions">
+                    <div class="upvoteButton">
+                        <iron-icon class="sideIcon" icon="arrow-upward"></iron-icon>
+                    </div>
+                    <div class="downvoteButton">
+                        <iron-icon class="sideIcon" icon="arrow-downward"></iron-icon>
+                    </div>
+                </div>
+                <div class="centerActions">
+                    <div class="votes">
+                        <iron-icon icon="arrow-upward"></iron-icon>
+                        3
+                    </div>
+                    <div class="expand">
+                        <iron-icon icon="remove"></iron-icon>
+                    </div>
+                    <div class="subComments">
+                        <iron-icon icon="editor:mode-comment"></iron-icon>
+                        5
+                    </div>
+                </div>
+                <div class="rightActions">
+                    <div class="respondButton">
+                        <iron-icon class="sideIcon" icon="reply"></iron-icon>
+                    </div>
+                    <div class="moreButton">
+                        <iron-icon class="sideIcon" icon="more-vert"></iron-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+    <script>
+        /** @polymerElement */
+        class FeadrComment extends Polymer.Element {
+            static get is() {
+                return 'feadr-comment';
+            }
+
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'cunt',
+                    },
+                };
+            }
+        }
+
+        window.customElements.define(FeadrComment.is, FeadrComment);
+    </script>
+</dom-module>

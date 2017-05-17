@@ -1,0 +1,60 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<dom-module id="feadr-post-section">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            .text {
+                padding: 10px;
+                text-align: justify;
+                font-size: 13px;
+                font-weight: 600;
+                opacity: 0.84;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
+
+            }
+
+            iron-image {
+                padding-top: 5px;
+                width: 100%;
+                --iron-image-width: 100%;
+            }
+        </style>
+
+        <div class="postContent">
+            <!-- TODO If image exists show the image container, else hide it -->
+            <!--<template is="dom-if" if="{{containsImage}}">-->
+            <div class="imageContainer">
+                <iron-image src="http://i.imgur.com/wrRgmR7.jpg"></iron-image>
+            </div>
+            <!--</template>-->
+            <!-- Text is mandatory, so always show -->
+            <div class="text">Dit is een beschrijving van de post, hier staan dus interresante dingen enzo.
+            </div>
+        </div>
+
+    </template>
+    <script>
+        /** @polymerElement */
+        class FeadrPostSection extends Polymer.Element {
+            static get is() {
+                return 'feadr-post-section';
+            }
+
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'cunt',
+                    },
+                };
+            }
+        }
+
+        window.customElements.define(FeadrPostSection.is, FeadrPostSection);
+    </script>
+</dom-module>
