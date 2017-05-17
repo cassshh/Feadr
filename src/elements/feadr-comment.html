@@ -7,7 +7,6 @@
         <style>
             :host {
                 display: block;
-                margin-top: 16px;
             }
 
             .card {
@@ -50,7 +49,7 @@
 
             .text {
                 width: 100%;
-                padding-left: 10px;
+                padding-left: 13px;
                 font-size: 13px;
                 font-weight: 600;
                 opacity: 0.84;
@@ -114,14 +113,14 @@
         <div class="card">
             <div class="commentHeader">
                 <div class="userName">
-                    Jesper Strating
+                    [[userName]]
                 </div>
                 <div class="timePost">
-                    6h ago
+                    [[postTime]]
                 </div>
             </div>
             <div class="text">
-                Dit is echt een slechte post.
+                [[commentText]]
             </div>
             <div class="commentFooter">
                 <div class="leftActions">
@@ -166,9 +165,17 @@
 
             static get properties() {
                 return {
-                    prop1: {
+                    commentText: {
                         type: String,
-                        value: 'cunt',
+                        value: 'Dit is een placeholder voor de text van een comment',
+                    },
+                    userName: {
+                        type: String,
+                        value: 'UserName',
+                    },
+                    postTime: {
+                        type: String,
+                        value: '1d ago',
                     },
                 };
             }

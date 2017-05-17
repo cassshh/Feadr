@@ -1,57 +1,71 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
 
 <dom-module id="feadr-add-comment">
     <template>
         <style>
             :host {
                 display: block;
+                width: 100%;
+                margin-top: 10px;
             }
-            #comments {
-                height: 80px;
-                background-color: #fff;
-                padding: 10px;
+
+            .commentContainer {
+                background-color: #F1F2F3;
+                display: block;
+                padding-bottom: 10px;
+                text-align: center;
             }
-            #comment {
-                width: 62%;
+
+            .input {
+                width: 60%;
+                display: inline-block;
+                position: relative;
+            }
+
+            .commentBtnContainer {
+                margin-left: 10px;
+                display: inline-block;
                 vertical-align: middle;
+                width: 42px;
+                height: 42px;
                 position: relative;
-                float: left;
-                background-color: #fff;
-                color: #000;
             }
-            #submit-btn {
-                vertical-align: middle;
-                position: relative;
-                float: left;
-                background-color: #544274;
+
+            .sendIcon {
+                width: 42px;
+                height: 42px;
+                background-color: #834D9B;
             }
-            #sendIcon {
-                width: 60px;
-            }
-            #userAvatar {
-                position: relative;
-                float: left;
-                width: 60px;
-                background-color: #000;
-                margin: 10px;
+
+            paper-textarea {
+                --paper-input-container-color: #834D9B;
+                --paper-input-container-focus-color: #834D9B;
+                text-align: left;
             }
         </style>
-        <div id="comments">
-            <img id="userAvatar" alt="UserAvatar" src="../../images/manifest/send_white.svg">
-
-            <paper-input id="comment" label="Add a comment..." char-counter maxlength="140"></paper-input>
-
-            <paper-button id="submit-btn"><img id="sendIcon" alt="SendIcon" src="../../images/manifest/send_white.svg"/></paper-button>
+        <div class="commentContainer">
+            <div class="comment">
+                <div class="input">
+                    <paper-textarea label="Leave a comment"></paper-textarea>
+                </div>
+                <div class="commentBtnContainer">
+                    <paper-ripple></paper-ripple>
+                    <img class="sendIcon" alt="SendIcon" src="../../images/manifest/send_white.svg"/>
+                </div>
+            </div>
         </div>
     </template>
 
     <script>
         /** @polymerElement */
         class FeadrAddComment extends Polymer.Element {
-            static get is() { return 'feadr-add-comment'; }
+            static get is() {
+                return 'feadr-add-comment';
+            }
+
             static get properties() {
                 return {
                     prop1: {
