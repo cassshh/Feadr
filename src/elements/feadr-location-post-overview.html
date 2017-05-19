@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+
+<dom-module id="feadr-location-post-overview">
+    <!-- Optional shadow DOM template -->
+    <template>
+        <style>
+            google-map {
+                height: 500px;
+            }
+        </style>
+        <google-map latitude="52.778219" longitude="6.912128" api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg" fit-to-markers="">
+        <google-map-marker latitude="52.778219" longitude="6.912128"
+                           draggable="true" title="Go f stenden!"></google-map-marker>
+        </google-map>
+    </template>
+    <script>
+        // Define the element's API using an ES2015 class
+        class FeadrLocationPostOverview extends Polymer.Element {
+
+            static get is() { return 'feadr-location-post-overview'; }
+            static get properties() {
+                return {
+                    greeting: {
+                        type: String,
+                        value: 'Hello!',
+                    },
+                };
+            }
+        }
+
+        // Register the x-custom element with the browser
+        window.customElements.define(FeadrLocationPostOverview.is,
+            FeadrLocationPostOverview);
+    </script>
+
+</dom-module>
