@@ -1,0 +1,67 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../elements/feadr-post-overview.html">
+<link rel="import" href="../feadr-app/shared-styles.html">
+
+<dom-module id="feadr-page-overview">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 4px;
+      }
+
+      paper-card {
+        width: 100%;
+        margin: 2px 0;
+      }
+    </style>
+    <div class="container">
+      <template is="dom-repeat" items="[[posts]]" as="post">
+        <paper-card>
+          <feadr-post-overview class="post"
+                               title="[[post.title]]"
+                               username="[[post.username]]"
+                               location="[[post.location.name]]"
+                               time="[[post.time]]"
+                               points="[[post.points]]"
+                               thumbnail="[[post.thumbnail]]">
+          </feadr-post-overview>
+        </paper-card>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    class FeadrOverview extends Polymer.Element {
+      static get is() {
+        return 'feadr-page-overview';
+      }
+
+      static get properties() {
+        return {
+          posts: {
+            type: Array,
+            value: [],
+            notify: true
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+        let overview = database.ref('overview').on('child_added', function (snapshot) {
+          this.push('posts', snapshot.val());
+        }.bind(this));
+      }
+    }
+
+    window.customElements.define(FeadrOverview.is, FeadrOverview);
+  </script>
+</dom-module>

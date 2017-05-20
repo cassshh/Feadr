@@ -55,6 +55,7 @@
     <script>
         // eslint-disable-next-line
         firebase.initializeApp(config);
+        var database = firebase.database();
     </script>
 
     <!-- Add any global styles for body, document, etc. -->
@@ -62,10 +63,10 @@
       body {
         margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
-        line-height: 1.5;
-        color: #eeeeee;
-        background-color: #313131;
+        color: #212121;
+        background-color: #f5f5f5;
       }
+
       .noscript {
         margin: 0 auto;
         text-align: center;
