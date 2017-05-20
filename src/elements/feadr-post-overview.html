@@ -1,10 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<! -- import conditional template -->
+<!-- import the module  -->
+<link rel="import" href="../feadr-app/shared-styles.html">
+<!-- import conditional template -->
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 
 <dom-module id="feadr-post-overview">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: flex;
         flex-direction: row;
@@ -34,8 +36,6 @@
       .title {
         padding-top: 6px;
         padding-bottom: 6px;
-        font-size: 12pt;
-        font-weight: bolder;
         text-align: justify;
       }
 
@@ -96,15 +96,6 @@
         opacity: 0.45;
       }
 
-      p {
-        margin: 0;
-        padding: 0;
-      }
-
-      img {
-        height: 100%;
-      }
-
     </style>
     <div class="points-container">
       <img class="points-arrow-icon" src="../../images/svg/arrow_up_black.svg">
@@ -113,7 +104,7 @@
     </div>
     <div class="content">
       <div class="title">
-        [[title]]
+        <h1>[[title]]</h1>
       </div>
       <div class="location-container">
         <img class="location-icon" src="../../images/svg/location_on_black.svg"/>

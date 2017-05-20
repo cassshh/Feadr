@@ -1,10 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<!-- import the module  -->
+<link rel="import" href="shared-styles.html">
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
 
 <dom-module id="feadr-app">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
       }
@@ -13,7 +15,6 @@
   </template>
 
   <script>
-    /** @polymerElement */
     class FeadrApp extends Polymer.Element {
       static get is() { return 'feadr-app'; }
       static get properties() {
