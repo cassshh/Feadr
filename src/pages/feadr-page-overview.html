@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../elements/feadr-post-overview.html">
 <link rel="import" href="../feadr-app/shared-styles.html">
@@ -49,16 +48,17 @@
           posts: {
             type: Array,
             value: [],
-            notify: true
+            notify: true,
           },
         };
       }
 
       ready() {
         super.ready();
-        let overview = database.ref('overview').on('child_added', function (snapshot) {
+        // eslint-disable-next-line
+        database.ref('overview').on('child_added', (snapshot) => {
           this.push('posts', snapshot.val());
-        }.bind(this));
+        });
       }
     }
 

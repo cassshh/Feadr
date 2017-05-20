@@ -17,121 +17,120 @@
 <link rel="import" href="../elements/feadr-post-section.html">
 <link rel="import" href="../elements/feadr-post-footer.html">
 <link rel="import" href="../elements/feadr-add-comment.html">
+<link rel="import" href="../feadr-app/shared-styles.html">
 
 <dom-module id="feadr-page-post">
-    <template>
-        <style>
-            :host {
-                display: block;
-            }
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
 
-            .card {
-                max-width: 800px;
-                color: black;
-                background-color: #F1F2F3;
-                font-weight: 300;
-                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-                font-family: 'Open Sans', sans-serif;
-            }
+      .card {
+        max-width: 800px;
+        color: black;
+        background-color: #F1F2F3;
+        font-weight: 300;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        font-family: 'Open Sans', sans-serif;
+      }
 
-            app-header {
-                color: #fff;
-                background-color: #834D9B;
-                margin: 0 auto;
-            }
+      app-header {
+        color: #fff;
+        background-color: #834D9B;
+        margin: 0 auto;
+      }
 
-            app-toolbar {
-                background-color: #834D9B;
-                max-width: 800px;
-                margin: 0 auto;
+      app-toolbar {
+        background-color: #834D9B;
+        max-width: 800px;
+        margin: 0 auto;
 
-            }
+      }
 
-            .content {
-                max-width: 800px;
-                margin: 0 auto;
-            }
+      .content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-        </style>
-        <app-header-layout>
-            <app-header slot="header" condenses fixed effects="waterfall">
-                <app-toolbar>
-                    <!-- Left icon -->
-                    <paper-icon-button icon="arrow-back"></paper-icon-button>
-                    <!-- right aligned icons -->
-                    <div main-title></div>
-                    <div class="rightIcons">
-                        <paper-icon-button icon="arrow-upward"></paper-icon-button>
-                        <paper-icon-button icon="arrow-downward"></paper-icon-button>
-                        <paper-icon-button icon="favorite"></paper-icon-button>
-                        <paper-icon-button icon="more-vert"></paper-icon-button>
-                    </div>
-                </app-toolbar>
-            </app-header>
-            <!-- Content -->
-            <div class="content">
-                <div class="card">
-                    <feadr-post-details></feadr-post-details>
-                    <!-- TODO repeat for amount of sections-->
-                    <feadr-post-section></feadr-post-section>
-                    <feadr-post-footer total-comments="[[totalComments]]"></feadr-post-footer>
-                </div>
-                <div class="postComment">
-                    <feadr-add-comment></feadr-add-comment>
-                </div>
-                <div class="comments">
-                    <!-- TODO Uncomment template when comments are queried from database -->
-                    <template is="dom-repeat" items="{{key}}" as="key">
-                     <feadr-comment key="[[key]]"></feadr-comment>
-                    </template>
-                </div>
-            </div>
-        </app-header-layout>
+    </style>
+    <app-header-layout>
+      <app-header slot="header" condenses fixed effects="waterfall">
+        <app-toolbar>
+          <!-- Left icon -->
+          <paper-icon-button icon="arrow-back"></paper-icon-button>
+          <!-- right aligned icons -->
+          <div main-title></div>
+          <div class="rightIcons">
+            <paper-icon-button icon="arrow-upward"></paper-icon-button>
+            <paper-icon-button icon="arrow-downward"></paper-icon-button>
+            <paper-icon-button icon="favorite"></paper-icon-button>
+            <paper-icon-button icon="more-vert"></paper-icon-button>
+          </div>
+        </app-toolbar>
+      </app-header>
+      <!-- Content -->
+      <div class="content">
+        <div class="card">
+          <feadr-post-details></feadr-post-details>
+          <!-- TODO repeat for amount of sections-->
+          <feadr-post-section></feadr-post-section>
+          <feadr-post-footer total-comments="[[totalComments]]"></feadr-post-footer>
+        </div>
+        <div class="postComment">
+          <feadr-add-comment></feadr-add-comment>
+        </div>
+        <div class="comments">
+          <!-- TODO Uncomment template when comments are queried from database -->
+          <template is="dom-repeat" items="{{key}}" as="key">
+            <feadr-comment key="[[key]]"></feadr-comment>
+          </template>
+        </div>
+      </div>
+    </app-header-layout>
 
-    </template>
-    <script>
-        /** @polymerElement */
-        class FeadrPost extends Polymer.Element {
-            static get is() {
-                return 'feadr-page-post';
-            }
+  </template>
+  <script>
+    class FeadrPost extends Polymer.Element {
+      static get is() {
+        return 'feadr-page-post';
+      }
 
-            static get properties() {
-                return {
-                    key: {
-                        type: Array,
-                    },
+      static get properties() {
+        return {
+          key: {
+            type: Array,
+            value: [],
+          },
 
-                    totalComments: {
-                        type: Number,
-                    },
-                };
-            }
+          totalComments: {
+            type: Number,
+          },
+        };
+      }
 
-            ready() {
-                super.ready();
-                this.getData();
-            }
+      ready() {
+        super.ready();
+        this.getData();
+      }
 
-            getData() {
-                this.getComments();
-            }
+      getData() {
+        this.getComments();
+      }
 
-            getComments() {
-                var that = this;
-                // eslint-disable-next-line
-                var commentsRef = firebase.database().ref('comments/posts/postpushkey1/');
-                commentsRef.on('value', function(snapshot) {
-                    that.key = [];
-                    if (snapshot.val() !== null) {
-                        snapshot.forEach(function(childSnapshot) {
-                            that.push('key', childSnapshot.key);
-                            that.totalComments = that.key.length;
-                        });
-                    }
-                });
-            }
-        }
-        window.customElements.define(FeadrPost.is, FeadrPost);
-    </script>
+      getComments() {
+        // eslint-disable-next-line
+        database.ref('comments/posts/postpushkey1/').on('value', (snapshot) => {
+          this.key = [];
+          if (snapshot.val() !== null) {
+            snapshot.forEach((childSnapshot) => {
+              this.push('key', childSnapshot.key);
+              this.totalComments = this.key.length;
+            });
+          }
+        });
+      }
+    }
+    window.customElements.define(FeadrPost.is, FeadrPost);
+  </script>
 </dom-module>
