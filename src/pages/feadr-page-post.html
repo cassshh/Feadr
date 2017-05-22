@@ -104,7 +104,7 @@
       static get properties() {
         return {
           id: {
-            type: Object,
+            type: String,
           },
           post: {
             type: Object,
@@ -122,6 +122,9 @@
 
       ready() {
         super.ready();
+        if(!this.id) {
+          location = '/404/No key given';
+        }
         this.getData();
       }
 
@@ -150,7 +153,7 @@
               this.set('post.time', diffDays + ' days ago');
             }
           } else {
-            this.location = '/404/Post not found';
+            location = '/404/Post not found';
           }
         });
       }
