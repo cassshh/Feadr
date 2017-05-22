@@ -1,0 +1,136 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/google-apis/google-maps-api.html">
+<!-- TODO Ombouwen naar Polymer 2.0 (PAIN IN THE FUCKING ASS) -->
+<dom-module id="feadr-location-input">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+
+        <google-maps-api id="maps" api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg" libraries="places"
+                         on-api-load="_onApiLoad"></google-maps-api>
+        <paper-input
+                id="inputPaper"
+                on-value-changed="_resetLocation"
+                invalid="{{invalid}}"
+                disabled$="[[disabled]]"
+                autofocus="[[autofocus]]"
+                label="Places"
+                value="[[locationName]]"
+                required$="[[required]]"
+                error-message="[[errorMessage]]">
+        </paper-input>
+    </template>
+</dom-module>
+<script>
+    /** @polymerElement
+     * @event place-clicked
+     * */
+    class FeadrLocationInput extends Polymer.Element {
+        static get is() {
+            return 'feadr-location-input';
+        }
+
+        static get properties() {
+            return {
+                query: {
+                    type: String,
+                    notify: true,
+                },
+                autocompleteOptions: {
+                    type: Object,
+                    value: function() {
+                        return {};
+                    },
+                },
+                place: {
+                    type: Object,
+                    value: function() {
+                        return {};
+                    },
+                    notify: true,
+                },
+                locationGeoPos: {
+                    type: Object,
+                    computed: '_computeLocation(longitude, latitude)',
+                },
+                locationName: {
+                    type: String,
+                    notify: true,
+                },
+                latitude: {
+                    type: Number,
+                    notify: true,
+                },
+                longitude: {
+                    type: Number,
+                    notify: true,
+                },
+
+                disabled: {
+                    type: Boolean,
+                    default: false,
+                },
+                required: {
+                    type: Boolean,
+                    default: false,
+                },
+                invalid: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                },
+                mapsApiKey: String,
+                label: String,
+                autofocus: Boolean,
+                errorMessage: String,
+            };
+        }
+
+        _computeLocation(longitude, latitude) {
+            return {
+                'lng': longitude,
+                'lat': latitude,
+            };
+        }
+
+        _resetLocation() {
+            this.place = {};
+        }
+
+        _onApiLoad() {
+            var rawInput;
+            if (this.$.inputPaper.querySelector('#input')) {
+                rawInput = this.$.inputPaper.querySelector('#input');
+            } else {
+                rawInput = this.$.inputPaper.root.querySelector('#input');
+            }
+            // eslint-disable-next-line
+            this.autocomplete = new google.maps.places
+                .Autocomplete(rawInput);
+            // eslint-disable-next-line
+            google.maps.event.addListener(this.autocomplete, 'place_changed',
+                function() {
+                    // Get the selected place data.
+                    // console.log(this.autocomplete.getPlace());
+                    this.$.inputPaper.invalid = false;
+                    this.place = this.autocomplete.getPlace();
+                    this.locationName = this.autocomplete
+                        .getPlace().formatted_address;
+                    this.latitude = this.autocomplete
+                        .getPlace().geometry.location.lat();
+                    this.longitude = this.autocomplete
+                        .getPlace().geometry.location.lng();
+                    this.locationGeoPos = this.autocomplete
+                        .getPlace().geometry.location;
+                    this.dispatchEvent(new CustomEvent('place-clicked'));
+                }.bind(this));
+        }
+
+    }
+
+    window.customElements.define(FeadrLocationInput.is, FeadrLocationInput);
+</script>
