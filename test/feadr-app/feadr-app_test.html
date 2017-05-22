@@ -29,10 +29,19 @@
   suite('feadr-app', function() {
     test('instantiating the element with default properties works', function() {
       var element = fixture('BasicTestFixture');
-      assert.equal(element.title, 'feadr-app');
+      assert.equal(element.title, 'Feadr Overview');
       var elementShadowRoot = element.shadowRoot;
       var elementHeader = elementShadowRoot.querySelector('h1');
-      assert.equal(elementHeader.innerHTML, 'feadr-app!');
+      assert.equal(elementHeader.innerHTML, 'Feadr Overview');
+    });
+
+    test('setting a property on the element works', function() {
+       // Create a test fixture
+       var element = fixture('ChangedPropertyTestFixture');
+       assert.equal(element.prop1, 'new-prop1');
+       var elementShadowRoot = element.shadowRoot;
+       var elementHeader = elementShadowRoot.querySelector('h1');
+       assert.equal(elementHeader.innerHTML, 'new-prop1!');
     });
   });
 </script>
