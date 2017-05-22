@@ -3,6 +3,8 @@
 <link rel="import" href="shared-styles.html">
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <dom-module id="feadr-app">
   <template>
@@ -11,19 +13,81 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <h1>[[title]]</h1>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+            route="{{route}}"
+            pattern="/:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+    </app-route>
+    <app-route
+            route="{{subroute}}"
+            pattern="/:id"
+            data="{{subrouteData}}">
+    </app-route>
+
+    <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]">
+      <feadr-page-overview data-route="overview"></feadr-page-overview>
+      <feadr-page-post data-route="post" id="[[id]]"></feadr-page-post>
+      <feadr-page-404 data-route="404" error="[[id]]"></feadr-page-404>
+    </iron-lazy-pages>
   </template>
 
   <script>
     class FeadrApp extends Polymer.Element {
-      static get is() { return 'feadr-app'; }
+      static get is() {
+        return 'feadr-app';
+      }
+
       static get properties() {
         return {
-          prop1: {
+          title: {
             type: String,
-            value: 'feadr-app',
+            value: 'Feadr Overview',
+          },
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          },
+          id: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_idChanged',
           },
         };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+          '_subrouteIdChanged(subrouteData.id)',
+        ];
+      }
+
+      _pageChanged(page, oldPage) {
+        console.log('_pageChanged: ' + page + ' | ' + oldPage);
+        const url = '../pages/feadr-page-' + page + '.html';
+        let resolvedPageUrl = this.resolveUrl(url);
+        Polymer.importHref(resolvedPageUrl, null,
+            this._showPage404.bind(this), true);
+      }
+
+      _idChanged(id, oldId) {
+        console.log('_idChanged: ' + id + ' | ' + oldId);
+      }
+
+      _showPage404() {
+        this.page = '404';
+      }
+
+      _routePageChanged(page) {
+        this.page = page || 'overview';
+      }
+
+      _subrouteIdChanged(id) {
+        this.id = id;
       }
     }
 

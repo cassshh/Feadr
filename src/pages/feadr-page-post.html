@@ -103,8 +103,11 @@
 
       static get properties() {
         return {
+          id: {
+            type: Object,
+          },
           post: {
-            typE: Object,
+            type: Object,
             value: null,
           },
           key: {
@@ -129,14 +132,14 @@
 
       getPostData() {
         // eslint-disable-next-line
-        database.ref('posts/-Kkjh8aZqTy7wKQ1cetC').once('value', (snapshot) => {
+        database.ref('posts/' + this.id).once('value', (snapshot) => {
           if (snapshot.val() !== null) {
             this.post = snapshot.val();
             const d1 = new Date();
             const d2 = new Date(this.post.time);
             const diff = d1 - d2;
             /* TODO Better time.
-              x min, x hours, x days, x weeks, x months, x years...
+             x min, x hours, x days, x weeks, x months, x years...
              */
             const diffDays = Math.round(diff / (1000 * 3600 * 24));
             if (diffDays === 0) {
@@ -146,6 +149,8 @@
             } else {
               this.set('post.time', diffDays + ' days ago');
             }
+          } else {
+            this.location = '/404/Post not found';
           }
         });
       }

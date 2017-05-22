@@ -2,6 +2,9 @@
   "entrypoint": "index.html",
   "shell": "src/feadr-app/feadr-app.html",
   "fragments": [
+    "src/pages/feadr-page-404.html",
+    "src/pages/feadr-page-overview.html",
+    "src/pages/feadr-page-post.html"
   ],
   "sources": [
     "src/**/*",
