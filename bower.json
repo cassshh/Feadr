@@ -17,7 +17,9 @@
     "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
     "google-map": "GoogleWebComponents/google-map#2.0-preview",
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^2.0.0",
-    "paper-card": "PolymerElements/paper-card#^2.0.0"
+    "paper-card": "PolymerElements/paper-card#^2.0.0",
+    "paper-chip": "ThomasCybulski/paper-chip#^2.0.0",
+    "paper-fab": "PolymerElements/paper-fab#^2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0",

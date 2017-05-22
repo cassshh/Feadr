@@ -1,7 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chip-input.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chip.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="feadr-post-add-section.html">
 
 <dom-module id="feadr-add-post">
     <template>
@@ -9,17 +13,58 @@
             :host {
                 display: block;
             }
-            #addPost {
-                width: 25%;
-            }
             #submit-btn {
                 background-color: #544274;
+                color: #fff;
+            }
+            #locationInput {
+                width: 94%;
+                display: inline-block;
+            }
+            #locationIcon {
+                margin-bottom: -10px;
+                width: 5%;
+            }
+            paper-chip-input {
+                --paper-chip-background-color: #816fa2;
+                --paper-chip-label-color: #fff;
+            }
+            #sectionsContainer {
+                position: relative;
+                background-color: #eeeeee;
+                padding: 20px;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+            paper-fab {
+                margin: 10px;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                --paper-fab-background: #544475;
+                --paper-fab-keyboard-focus-background: #544475;
+            }
+            #addBtn {
+                height: 70px;
             }
         </style>
         <div id="addPost">
-            <paper-input id="title" label="Title" char-counter maxlength="140"></paper-input>
+            <paper-input id="title" label="Title" char-counter maxlength="140"></paper-input><br>
 
-            <paper-textarea id="text" label="Text" char-counter></paper-textarea>
+            <div>
+                <paper-input id="locationInput" label="Location"></paper-input>
+                <img id="locationIcon" alt="LocationIcon" src="../../images/svg/location.svg"/>
+            </div><br>
+
+            <paper-chip-input label="+Add tags" items='[]' closable></paper-chip-input><br>
+
+            <div id="sectionsContainer">
+                <div id="sections">
+                    <feadr-add-post-section></feadr-add-post-section>
+                </div>
+                <div id="addBtn">
+                    <paper-fab icon="add" on-click="_addSection"></paper-fab>
+                </div>
+            </div><br>
 
             <paper-button id="submit-btn">Submit</paper-button>
         </div>
@@ -36,6 +81,11 @@
                         value: 'feadr-add-post',
                     },
                 };
+            }
+            _addSection() {
+                var sections = this.$.sections;
+                var section = document.createElement('feadr-add-post-section');
+                sections.insertBefore(section, null);
             }
         }
 

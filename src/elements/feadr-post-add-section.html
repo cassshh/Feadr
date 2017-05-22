@@ -1,0 +1,102 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+
+<dom-module id="feadr-add-post-section">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            .thumb {
+                height: 100px;
+                width: 100px;
+                border: 1px solid #dedede;
+                margin: 10px 5px 0 0;
+            }
+            .inputWrapper {
+                display: inline-block;
+                height: 100px;
+                width: 100px;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+                border: 1px solid #dedede;
+                background-color: #EDEDED;
+            }
+            #files {
+                cursor: pointer;
+                height: 100%;
+                position:absolute;
+                top: 0;
+                right: 0;
+                z-index: 99;
+                font-size:50px;
+                opacity: 0;
+                -moz-opacity: 0;
+                filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0)
+            }
+            #plusIcon {
+                display:inline-block;
+                margin-top: 37px;
+                margin-left: 37px;
+                width: 25px;
+                height: 25px;
+            }
+        </style>
+        <div class="section">
+            <output id="list"></output>
+
+            <div class="inputWrapper">
+                <img id="plusIcon" src="../../images/svg/plus_gray.svg" alt="Plus Icon" />
+                <input type="file" id="files" name="files[]" on-change="_showImage" multiple />
+            </div>
+
+            <paper-textarea id="text" label="Text" char-counter></paper-textarea>
+        </div>
+    </template>
+
+    <script>
+        /** @polymerElement */
+        class FeadrAddPostSection extends Polymer.Element {
+            static get is() { return 'feadr-add-post-section'; }
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'feadr-add-post-section',
+                    },
+                };
+            }
+            _showImage(images) {
+                var files = images.target.files; // FileList object
+                var reader = new FileReader();
+                var list = this.$.list;
+
+                // Loop through the FileList and render image files as thumbnails.
+                for (var i = 0, f; f = files[i]; i++) {
+                    // Only process image files.
+                    if (!f.type.match('image.*')) {
+                        continue;
+                    }
+
+                    // Closure to capture the file information.
+                    reader.onload = (function(theFile) {
+                        return function(e) {
+                            // Render thumbnail.
+                            var span = document.createElement('span');
+                            span.innerHTML = ['<img class="thumb" src="',
+                                e.target.result,
+                                '" title="', escape(theFile.name), '"/>'].join('');
+                            list.insertBefore(span, null);
+                        };
+                    })(f);
+
+                    // Read in the image file as a data URL.
+                    reader.readAsDataURL(f);
+                }
+            }
+        }
+
+        window.customElements.define(FeadrAddPostSection.is, FeadrAddPostSection);
+    </script>
+</dom-module>
