@@ -21,7 +21,7 @@
 
 <test-fixture id="ChangedPropertyTestFixture">
   <template>
-    <feadr-app prop1="new-prop1"></feadr-app>
+    <feadr-app title="new-prop1"></feadr-app>
   </template>
 </test-fixture>
 
@@ -38,7 +38,7 @@
     test('setting a property on the element works', function() {
        // Create a test fixture
        var element = fixture('ChangedPropertyTestFixture');
-       assert.equal(element.prop1, 'new-prop1');
+       assert.equal(element.title, 'new-prop1');
        var elementShadowRoot = element.shadowRoot;
        var elementHeader = elementShadowRoot.querySelector('h1');
        assert.equal(elementHeader.innerHTML, 'new-prop1!');
