@@ -29,6 +29,7 @@
   },
   "private": true,
   "resolutions": {
-    "iron-resizable-behavior": "^2.0.0"
+    "iron-resizable-behavior": "^2.0.0",
+    "iron-selector": "^2.0.0"
   }
 }
