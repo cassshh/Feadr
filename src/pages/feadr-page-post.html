@@ -123,6 +123,7 @@
       ready() {
         super.ready();
         if(!this.id) {
+          // eslint-disable-next-line no-global-assign
           location = '/404/No key given';
         }
         this.getData();
@@ -153,6 +154,7 @@
               this.set('post.time', diffDays + ' days ago');
             }
           } else {
+            // eslint-disable-next-line no-global-assign
             location = '/404/Post not found';
           }
         });
