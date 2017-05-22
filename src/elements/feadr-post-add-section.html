@@ -69,7 +69,6 @@
             }
             _showImage(images) {
                 var files = images.target.files; // FileList object
-                var reader = new FileReader();
                 var list = this.$.list;
 
                 // Loop through the FileList and render image files as thumbnails.
@@ -78,7 +77,7 @@
                     if (!f.type.match('image.*')) {
                         continue;
                     }
-
+                    var reader = new FileReader();
                     // Closure to capture the file information.
                     reader.onload = (function(theFile) {
                         return function(e) {
