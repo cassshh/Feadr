@@ -68,6 +68,7 @@
       const input = this.$.inputLocation;
       // eslint-disable-next-line
       const autocomplete = new google.maps.places.Autocomplete(input);
+      // eslint-disable-next-line
       google.maps.event.addListener(autocomplete, 'place_changed', () => {
         const place = autocomplete.getPlace();
 
