@@ -85,12 +85,12 @@
           <feadr-post-footer total-comments="[[totalComments]]"></feadr-post-footer>
         </div>
         <div class="postComment">
-          <feadr-add-comment></feadr-add-comment>
+          <feadr-add-comment postid="[[postid]]"></feadr-add-comment>
         </div>
         <div class="comments">
           <!-- TODO Uncomment template when comments are queried from database -->
           <template is="dom-repeat" items="{{key}}" as="key">
-            <feadr-comment key="[[key]]"></feadr-comment>
+            <feadr-comment postid="[[postid]]" key="[[key]]"></feadr-comment>
           </template>
         </div>
       </div>
@@ -105,8 +105,9 @@
 
       static get properties() {
         return {
-          id: {
+          postid: {
             type: String,
+            observer: '_postidChange',
           },
           post: {
             type: Object,
@@ -119,15 +120,19 @@
           totalComments: {
             type: Number,
           },
+          listener: Object,
         };
       }
 
       ready() {
         super.ready();
-        if (!this.id) {
-          this.$.ironLocation.set('path', '/404/No post was given');
+        if (!this.postid) {
+          this.$.ironLocation.set('path', '/404');
           return;
         }
+      }
+
+      _postidChange() {
         this.getData();
       }
 
@@ -138,7 +143,7 @@
 
       getPostData() {
         // eslint-disable-next-line
-        database.ref('posts/' + this.id).once('value', (snapshot) => {
+        database.ref('posts/' + this.postid).once('value', (snapshot) => {
           if (snapshot.val() !== null) {
             this.post = snapshot.val();
             const d1 = new Date();
@@ -157,14 +162,14 @@
               this.set('post.time', diffDays + ' days ago');
             }
           } else {
-            this.$.ironLocation.set('path', '/404/Post was not found :(');
+            this.$.ironLocation.set('path', '/404');
           }
         });
       }
 
       getComments() {
         // eslint-disable-next-line
-        database.ref('comments/posts/postpushkey1/').on('value', (snapshot) => {
+        database.ref('comments/posts/' + this.postid).on('value', (snapshot) => {
           this.key = [];
           if (snapshot.val() !== null) {
             snapshot.forEach((childSnapshot) => {

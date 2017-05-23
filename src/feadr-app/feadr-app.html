@@ -5,7 +5,7 @@
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <dom-module id="feadr-app">
   <template>
@@ -23,22 +23,33 @@
     </app-route>
     <app-route
             route="{{subroute}}"
-            pattern="/:id"
+            pattern="/:subpage"
             data="{{subrouteData}}">
     </app-route>
 
-    <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" fallback-selection="fallback" hide-immediately>
-      <feadr-page-overview data-route="overview" page="[[page]]" data-path="../pages/feadr-page-overview.html"></feadr-page-overview>
-      <feadr-page-discover data-route="discover" data-path="../pages/feadr-page-discover.html"></feadr-page-discover>
-      <feadr-page-post data-route="post" id="[[id]]" data-path="../pages/feadr-page-post.html"></feadr-page-post>
-      <feadr-page-404 data-route="fallback" error="[[id]]" data-path="../pages/feadr-page-404.html"></feadr-page-404>
-    </iron-lazy-pages>
+    <iron-pages
+            attr-for-selected="name"
+            selected="[[page]]"
+            fallback-selection="fallback"
+            >
+      <feadr-page-overview name="overview"></feadr-page-overview>
+      <feadr-page-discover name="discover"></feadr-page-discover>
+      <feadr-page-post name="post" page="[[page]]" postid="{{subpage}}"></feadr-page-post>
+      <feadr-page-404 name="fallback" error="[[subpage]]"></feadr-page-404>
+    </iron-pages>
   </template>
 
   <script>
     class FeadrApp extends Polymer.Element {
       static get is() {
         return 'feadr-app';
+      }
+
+      constructor() {
+        super();
+        // Get root pattern for app-route, for more info about `rootPath` see:
+        // https://www.polymer-project.org/2.0/docs/upgrade#urls-in-templates
+        // this.rootPattern = (new URL(this.rootPath)).pathname;
       }
 
       static get properties() {
@@ -48,35 +59,51 @@
             reflectToAttribute: true,
             observer: '_pageChanged',
           },
-          id: {
+          subpage: {
             type: String,
             reflectToAttribute: true,
-            observer: '_idChanged',
+            observer: '_subpageChanged',
           },
+          rootPattern: String,
         };
       }
 
       static get observers() {
         return [
           '_routePageChanged(routeData.page)',
-          '_subrouteIdChanged(subrouteData.id)',
+          '_routeSubPageChanged(subrouteData.subpage)',
         ];
+      }
+
+      _routePageChanged(page) {
+        if (page === undefined) {
+          return;
+        }
+        this.page = page || 'overview';
+      }
+
+      _routeSubPageChanged(subpage) {
+        this.subpage = subpage;
       }
 
       _pageChanged(page, oldPage) {
         console.log('_pageChanged: ' + page + ' | ' + oldPage);
+        // Load page import on demand. Show 404 page if fails
+        const link = '../pages/feadr-page-' + page + '.html';
+        var resolvedPageUrl = this.resolveUrl(link);
+        Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            this._showPage404.bind(this),
+            true);
       }
 
-      _idChanged(id, oldId) {
-        console.log('_idChanged: ' + id + ' | ' + oldId);
+      _subpageChanged(subpage, oldSubpage) {
+        console.log('_subpageChanged: ' + subpage + ' | ' + oldSubpage);
       }
 
-      _routePageChanged(page) {
-        this.page = page || 'overview';
-      }
-
-      _subrouteIdChanged(id) {
-        this.id = id;
+      _showPage404() {
+        this.page = '404';
       }
     }
 

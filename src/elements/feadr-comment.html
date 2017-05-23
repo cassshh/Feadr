@@ -4,258 +4,262 @@
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <dom-module id="feadr-comment">
-    <template>
-        <style>
-            :host {
-                display: block;
-            }
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
 
-            .card {
-                max-width: 800px;
-                color: black;
-                background-color: #f1f2f3;
-                font-weight: 300;
-                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-            }
+      .card {
+        max-width: 800px;
+        color: black;
+        background-color: #f1f2f3;
+        font-weight: 300;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
 
-            /* Comment Header */
-            .commentHeader {
-                width: 100%;
-                display: table;
-            }
+      /* Comment Header */
+      .commentHeader {
+        width: 100%;
+        display: table;
+      }
 
-            .userName {
-                width: 70%;
-                display: table-cell;
-                padding-left: 13px;
-                padding-top: 13px;
-                font-size: 13px;
-                font-weight: 800;
-                font-family: 'Open Sans', sans-serif;
-                color: #834D9B;
-            }
+      .userName {
+        width: 70%;
+        display: table-cell;
+        padding-left: 13px;
+        padding-top: 13px;
+        font-size: 13px;
+        font-weight: 800;
+        font-family: 'Open Sans', sans-serif;
+        color: #834D9B;
+      }
 
-            .timePost {
-                width: 30%;
-                display: table-cell;
-                text-align: right;
-                padding-right: 13px;
-                padding-top: 13px;
-                font-size: 10px;
-                font-weight: 600;
-                opacity: 0.54;
-                font-family: 'Open Sans', sans-serif;
-                color: #000000;
-            }
+      .timePost {
+        width: 30%;
+        display: table-cell;
+        text-align: right;
+        padding-right: 13px;
+        padding-top: 13px;
+        font-size: 10px;
+        font-weight: 600;
+        opacity: 0.54;
+        font-family: 'Open Sans', sans-serif;
+        color: #000000;
+      }
 
-            .text {
-                width: 90%;
-                padding-left: 13px;
-                font-size: 13px;
-                font-weight: 600;
-                opacity: 0.84;
-                text-align: justify;
-                font-family: 'Open Sans', sans-serif;
-                color: #000000;
-            }
+      .text {
+        width: 90%;
+        padding-left: 13px;
+        font-size: 13px;
+        font-weight: 600;
+        opacity: 0.84;
+        text-align: justify;
+        font-family: 'Open Sans', sans-serif;
+        color: #000000;
+      }
 
-            .actionFooter {
-                width: 100%;
-                display: inline-block;
-                padding: 10px;
-                text-align: center;
-            }
+      .actionFooter {
+        width: 100%;
+        display: inline-block;
+        padding: 10px;
+        text-align: center;
+      }
 
-            .commentFooter {
-                width: 100%;
-                display: inline-block;
-                padding: 10px;
-                text-align: center;
-            }
-            .leftActions {
-                display: inline-block;
-                float: left;
-                width: auto;
-            }
+      .commentFooter {
+        width: 100%;
+        display: inline-block;
+        padding: 10px;
+        text-align: center;
+      }
 
-            .centerActions {
-                display: inline-block;
-                text-align: justify;
-                text-align-last: center;
-                width: 100%;
-            }
+      .leftActions {
+        display: inline-block;
+        float: left;
+        width: auto;
+      }
 
-            .rightActions {
-                display: inline-block;
-                float: right;
-                width: auto;
-            }
+      .centerActions {
+        display: inline-block;
+        text-align: justify;
+        text-align-last: center;
+        width: 100%;
+      }
 
-            .votes, .subComments, .expand, .respondButton, .moreButton, .upvoteButton, .downvoteButton {
-                display: inline-block;
-                margin-right: 15px;
-            }
+      .rightActions {
+        display: inline-block;
+        float: right;
+        width: auto;
+      }
 
-            iron-icon{
-                height: 14px;
-                width: 14px;
-                margin-bottom: 2px;
-                opacity: 0.84;
-                color: #000000;
-            }
+      .votes, .subComments, .expand, .respondButton, .moreButton, .upvoteButton, .downvoteButton {
+        display: inline-block;
+        margin-right: 15px;
+      }
 
-            .paperBtn {
-                --iron-icon-height: 5px;
-                --iron-icon-width: 5px;
-            }
+      iron-icon {
+        height: 14px;
+        width: 14px;
+        margin-bottom: 2px;
+        opacity: 0.84;
+        color: #000000;
+      }
 
-            paper-icon-button {
-                height: 30px;
-                width: 30px;
-                color: #000000;
-            }
-        </style>
+      .paperBtn {
+        --iron-icon-height: 5px;
+        --iron-icon-width: 5px;
+      }
 
-        <div id="card" class="card" on-click="_commentSelected">
-            <div class="commentHeader">
-                <div class="userName">
-                    [[userName]]
-                </div>
-                <div class="timePost">
-                    [[postTime]]
-                </div>
-            </div>
-            <div class="text">
-                [[commentText]]
-            </div>
-            <div class="actionFooter" id="actionFooter" style="display: none;">
-                <div class="leftActions">
-                    <div class="upvoteButton">
-                        <paper-icon-button class="paperBtn" on-click="_upvoteComment" icon="arrow-upward"></paper-icon-button>
-                    </div>
-                    <div class="downvoteButton">
-                        <paper-icon-button on-click="_stopPropagation" class="paperBtn"  icon="arrow-downward"></paper-icon-button>
-                    </div>
-                </div>
-                <div class="rightActions">
-                    <div class="respondButton">
-                        <paper-icon-button on-click="_stopPropagation" icon="reply"></paper-icon-button>
-                    </div>
-                    <div class="moreButton">
-                        <paper-icon-button on-click="_stopPropagation" icon="more-vert"></paper-icon-button>
-                    </div>
-                </div>
-            </div>
-            <div class="commentFooter">
-                <div class="centerActions">
-                    <div class="votes">
-                        <iron-icon icon="arrow-upward"></iron-icon>
-                        [[upVotes]]
-                    </div>
-                    <div class="expand">
-                        <iron-icon id="expandIcon" icon="unfold-more"></iron-icon>
-                    </div>
-                    <div class="subComments">
-                        <iron-icon icon="editor:mode-comment"></iron-icon>
-                        5
-                    </div>
-                </div>
-            </div>
+      paper-icon-button {
+        height: 30px;
+        width: 30px;
+        color: #000000;
+      }
+    </style>
+
+    <div id="card" class="card" on-click="_commentSelected">
+      <div class="commentHeader">
+        <div class="userName">
+          [[userName]]
         </div>
+        <div class="timePost">
+          [[postTime]]
+        </div>
+      </div>
+      <div class="text">
+        [[commentText]]
+      </div>
+      <div class="actionFooter" id="actionFooter" style="display: none;">
+        <div class="leftActions">
+          <div class="upvoteButton">
+            <paper-icon-button class="paperBtn" on-click="_upvoteComment" icon="arrow-upward"></paper-icon-button>
+          </div>
+          <div class="downvoteButton">
+            <paper-icon-button on-click="_stopPropagation" class="paperBtn" icon="arrow-downward"></paper-icon-button>
+          </div>
+        </div>
+        <div class="rightActions">
+          <div class="respondButton">
+            <paper-icon-button on-click="_stopPropagation" icon="reply"></paper-icon-button>
+          </div>
+          <div class="moreButton">
+            <paper-icon-button on-click="_stopPropagation" icon="more-vert"></paper-icon-button>
+          </div>
+        </div>
+      </div>
+      <div class="commentFooter">
+        <div class="centerActions">
+          <div class="votes">
+            <iron-icon icon="arrow-upward"></iron-icon>
+            [[upVotes]]
+          </div>
+          <div class="expand">
+            <iron-icon id="expandIcon" icon="unfold-more"></iron-icon>
+          </div>
+          <div class="subComments">
+            <iron-icon icon="editor:mode-comment"></iron-icon>
+            5
+          </div>
+        </div>
+      </div>
+    </div>
 
-    </template>
-    <script>
-        /** @polymerElement */
-        class FeadrComment extends Polymer.Element {
-            static get is() {
-                return 'feadr-comment';
-            }
+  </template>
+  <script>
+    /** @polymerElement */
+    class FeadrComment extends Polymer.Element {
+      static get is() {
+        return 'feadr-comment';
+      }
 
-            static get properties() {
-                return {
-                    commentText: {
-                        type: String,
-                        value: 'Dit is een placeholder voor de text van een comment',
-                    },
-                    userName: {
-                        type: String,
-                        value: 'UserName',
-                    },
-                    postTime: {
-                        type: String,
-                        value: '1d ago',
-                    },
-                    upVotes: {
-                        type: Number,
-                    },
-                    comment: {
-                        type: Array,
-                    },
-                    key: {
-                        type: String,
-                        observer: '_keyChanged',
-                    },
-                    commentSelected: {
-                        type: Boolean,
-                        value: false,
-                    },
-                };
-            }
+      static get properties() {
+        return {
+          postid: {
+            type: String,
+          },
+          commentText: {
+            type: String,
+            value: 'Dit is een placeholder voor de text van een comment',
+          },
+          userName: {
+            type: String,
+            value: 'UserName',
+          },
+          postTime: {
+            type: String,
+            value: '1d ago',
+          },
+          upVotes: {
+            type: Number,
+          },
+          comment: {
+            type: Array,
+          },
+          key: {
+            type: String,
+            observer: '_keyChanged',
+          },
+          commentSelected: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
 
-            _keyChanged() {
-                this._getData();
-            }
+      _keyChanged() {
+        this._getData();
+      }
 
-            _getData() {
-                var that = this;
-                // eslint-disable-next-line
-                var commentDataRef = firebase.database()
-                        .ref('comments/posts/postpushkey1/' + that.key);
-                commentDataRef.on('value', function(snapshot) {
-                    if (snapshot.val() !== null) {
-                        that.commentText = snapshot.val().text;
-                        that.userName = snapshot.val().user;
-                        that.upVotes = snapshot.val().upVotes;
-                    }
-                });
-            }
+      _getData() {
+        var that = this;
+        // eslint-disable-next-line
+        var commentDataRef = firebase.database()
+            .ref('comments/posts/' + this.postid + '/' + that.key);
+        commentDataRef.on('value', function(snapshot) {
+          if (snapshot.val() !== null) {
+            that.commentText = snapshot.val().text;
+            that.userName = snapshot.val().user;
+            that.upVotes = snapshot.val().upVotes;
+          }
+        });
+      }
 
-            _upvoteComment() {
-                this._stopPropagation();
-                var that = this;
-                // eslint-disable-next-line
-                var upVotes = firebase.database()
-                        .ref('comments/posts/' + 'postpushkey1/' + that.key);
-                upVotes.once('value', function(snapshot) {
-                    var upVotesCount = snapshot.val().upVotes;
-                    upVotes.update({
-                        'upVotes': upVotesCount + 1,
-                    });
-                });
-            }
+      _upvoteComment() {
+        this._stopPropagation();
+        var that = this;
+        // eslint-disable-next-line
+        var upVotes = firebase.database()
+            .ref('comments/posts/' + this.postid + '/' + that.key);
+        upVotes.once('value', function(snapshot) {
+          var upVotesCount = snapshot.val().upVotes;
+          upVotes.update({
+            'upVotes': upVotesCount + 1,
+          });
+        });
+      }
 
-            _commentSelected() {
-                var footer = this.$.actionFooter;
-                var expandIcon = this.$.expandIcon;
-                var card = this.$.card;
-                if(this.commentSelected === false) {
-                    this.commentSelected = true;
-                    footer.setAttribute('style', 'display:visible;');
-                    expandIcon.setAttribute('icon', 'unfold-less');
-                    card.setAttribute('style', 'background-color: #ecedef;');
-                } else {
-                    this.commentSelected = false;
-                    footer.setAttribute('style', 'display:none;');
-                    expandIcon.setAttribute('icon', 'unfold-more');
-                    card.setAttribute('style', 'background-color: #f1f2f3;');
-                }
-            }
-
-            _stopPropagation() {
-                event.stopPropagation();
-            }
+      _commentSelected() {
+        var footer = this.$.actionFooter;
+        var expandIcon = this.$.expandIcon;
+        var card = this.$.card;
+        if (this.commentSelected === false) {
+          this.commentSelected = true;
+          footer.setAttribute('style', 'display:visible;');
+          expandIcon.setAttribute('icon', 'unfold-less');
+          card.setAttribute('style', 'background-color: #ecedef;');
+        } else {
+          this.commentSelected = false;
+          footer.setAttribute('style', 'display:none;');
+          expandIcon.setAttribute('icon', 'unfold-more');
+          card.setAttribute('style', 'background-color: #f1f2f3;');
         }
+      }
 
-        window.customElements.define(FeadrComment.is, FeadrComment);
-    </script>
+      _stopPropagation() {
+        event.stopPropagation();
+      }
+    }
+
+    window.customElements.define(FeadrComment.is, FeadrComment);
+  </script>
 </dom-module>
