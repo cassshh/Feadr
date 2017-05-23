@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../elements/feadr-post-overview.html">
 <link rel="import" href="../feadr-app/shared-styles.html">
 
@@ -10,31 +12,31 @@
         display: block;
       }
 
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 4px;
+      #list {
+        @apply (--layout-flex);
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: 0 auto;
+        };
       }
 
-      paper-card {
-        width: 100%;
-        margin: 2px 0;
+      .post {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
       }
+
     </style>
-    <div class="container">
-      <template is="dom-repeat" items="[[posts]]" as="post">
-        <paper-card>
-          <feadr-post-overview class="post"
-                               title="[[post.title]]"
-                               username="[[post.username]]"
-                               location="[[post.location.name]]"
-                               time="[[post.time]]"
-                               points="[[post.points]]"
-                               thumbnail="[[post.thumbnail]]">
-          </feadr-post-overview>
-        </paper-card>
+    <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
+      <template>
+        <feadr-post-overview class="post"
+                             title$="[[post.title]]"
+                             username$="[[post.username]]"
+                             location$="[[post.location.name]]"
+                             time$="[[post.time]]"
+                             points$="[[post.points]]"
+                             thumbnail$="[[post.thumbnail]]">
+        </feadr-post-overview>
       </template>
-    </div>
+    </iron-list>
   </template>
 
   <script>
