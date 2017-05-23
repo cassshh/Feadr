@@ -4,7 +4,8 @@
   "fragments": [
     "src/pages/feadr-page-404.html",
     "src/pages/feadr-page-overview.html",
-    "src/pages/feadr-page-post.html"
+    "src/pages/feadr-page-post.html",
+    "src/pages/feadr-page-discover.html"
   ],
   "sources": [
     "src/**/*",
