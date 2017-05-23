@@ -28,12 +28,14 @@
     <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
       <template>
         <feadr-post-overview class="post"
-                             title$="[[post.title]]"
-                             username$="[[post.username]]"
-                             location$="[[post.location.name]]"
-                             time$="[[post.time]]"
-                             points$="[[post.points]]"
-                             thumbnail$="[[post.thumbnail]]">
+                             on-tap="handleTap"
+                             key$="[[post.key]]"
+                             title$="[[post.val.title]]"
+                             username$="[[post.val.username]]"
+                             location$="[[post.val.location.name]]"
+                             time$="[[post.val.time]]"
+                             points$="[[post.val.points]]"
+                             thumbnail$="[[post.val.thumbnail]]">
         </feadr-post-overview>
       </template>
     </iron-list>
@@ -55,11 +57,20 @@
         };
       }
 
+      handleTap(e) {
+        const key = e.target.getAttribute('key');
+        // eslint-disable-next-line
+        location = '/post/'+key;
+      }
+
       ready() {
         super.ready();
         // eslint-disable-next-line
         database.ref('overview').on('child_added', (snapshot) => {
-          this.push('posts', snapshot.val());
+          this.push('posts', {
+            key: snapshot.key,
+            val: snapshot.val(),
+          });
         });
       }
     }
