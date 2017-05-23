@@ -28,7 +28,7 @@
     </app-route>
 
     <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" fallback-selection="fallback" hide-immediately>
-      <feadr-page-overview data-route="overview" data-path="../pages/feadr-page-overview.html"></feadr-page-overview>
+      <feadr-page-overview data-route="overview" page="[[page]]" data-path="../pages/feadr-page-overview.html"></feadr-page-overview>
       <feadr-page-discover data-route="discover" data-path="../pages/feadr-page-discover.html"></feadr-page-discover>
       <feadr-page-post data-route="post" id="[[id]]" data-path="../pages/feadr-page-post.html"></feadr-page-post>
       <feadr-page-404 data-route="fallback" error="[[id]]" data-path="../pages/feadr-page-404.html"></feadr-page-404>

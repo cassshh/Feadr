@@ -56,6 +56,10 @@
             value: [],
             notify: true,
           },
+          page: {
+            type: String,
+            observer: 'pageChanged',
+          }
         };
       }
 
@@ -74,6 +78,14 @@
           });
         });
       }
+
+      pageChanged(page) {
+        if (page === 'overview') {
+          // Re-render, bc mobile struggles...
+          this.$.list.notifyResize();
+        }
+      }
+
     }
 
     window.customElements.define(FeadrOverview.is, FeadrOverview);
