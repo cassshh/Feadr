@@ -21,7 +21,7 @@
             label="Location"
             placeholder="Search for a location"
             required$="[[required]]"
-            error-message="[[errorMessage]]">
+            error-message="Enter valid location">
     </paper-input>
   </template>
 </dom-module>
@@ -54,7 +54,6 @@
         mapsApiKey: String,
         label: String,
         autofocus: Boolean,
-        errorMessage: String,
       };
     }
 
@@ -74,8 +73,10 @@
 
         if(!place.geometry) {
           // Message no location selected
+          input.invalid = true;
           return;
         }
+        input.invalid = false;
         this.place = place;
       });
     }
