@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
 <link rel="import" href="../elements/feadr-post-overview.html">
 <link rel="import" href="../feadr-app/shared-styles.html">
 
@@ -25,6 +26,7 @@
       }
 
     </style>
+    <iron-location id="ironLocation"></iron-location>
     <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
       <template>
         <feadr-post-overview class="post"
@@ -59,8 +61,7 @@
 
       handleTap(e) {
         const key = e.target.getAttribute('key');
-        // eslint-disable-next-line
-        location = '/post/'+key;
+        this.$.ironLocation.set('path', '/post/'+key);
       }
 
       ready() {

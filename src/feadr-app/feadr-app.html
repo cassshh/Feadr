@@ -5,6 +5,7 @@
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
 
 <dom-module id="feadr-app">
   <template>
@@ -26,11 +27,11 @@
             data="{{subrouteData}}">
     </app-route>
 
-    <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]">
-      <feadr-page-overview data-route="overview"></feadr-page-overview>
-      <feadr-page-discover data-route="discover"></feadr-page-discover>
-      <feadr-page-post data-route="post" id="[[id]]"></feadr-page-post>
-      <feadr-page-404 data-route="404" error="[[id]]"></feadr-page-404>
+    <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" fallback-selection="fallback" hide-immediately>
+      <feadr-page-overview data-route="overview" data-path="../pages/feadr-page-overview.html"></feadr-page-overview>
+      <feadr-page-discover data-route="discover" data-path="../pages/feadr-page-discover.html"></feadr-page-discover>
+      <feadr-page-post data-route="post" id="[[id]]" data-path="../pages/feadr-page-post.html"></feadr-page-post>
+      <feadr-page-404 data-route="fallback" error="[[id]]" data-path="../pages/feadr-page-404.html"></feadr-page-404>
     </iron-lazy-pages>
   </template>
 
@@ -64,18 +65,10 @@
 
       _pageChanged(page, oldPage) {
         console.log('_pageChanged: ' + page + ' | ' + oldPage);
-        const url = '../pages/feadr-page-' + page + '.html';
-        let resolvedPageUrl = this.resolveUrl(url);
-        Polymer.importHref(resolvedPageUrl, null,
-            this._showPage404.bind(this), true);
       }
 
       _idChanged(id, oldId) {
         console.log('_idChanged: ' + id + ' | ' + oldId);
-      }
-
-      _showPage404() {
-        this.page = '404';
       }
 
       _routePageChanged(page) {
