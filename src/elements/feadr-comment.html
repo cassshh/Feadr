@@ -13,7 +13,7 @@
             .card {
                 max-width: 800px;
                 color: black;
-                background-color: #F1F2F3;
+                background-color: #f1f2f3;
                 font-weight: 300;
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
             }
@@ -49,7 +49,7 @@
             }
 
             .text {
-                width: 100%;
+                width: 90%;
                 padding-left: 13px;
                 font-size: 13px;
                 font-weight: 600;
@@ -59,31 +59,36 @@
                 color: #000000;
             }
 
+            .actionFooter {
+                width: 100%;
+                display: inline-block;
+                padding: 10px;
+                text-align: center;
+            }
+
             .commentFooter {
                 width: 100%;
                 display: inline-block;
                 padding: 10px;
+                text-align: center;
             }
-
             .leftActions {
                 display: inline-block;
-                text-align: justify;
-                text-align-last: center;
-                width: 30%;
+                float: left;
+                width: auto;
             }
 
             .centerActions {
                 display: inline-block;
                 text-align: justify;
                 text-align-last: center;
-                width: 40%;
+                width: 100%;
             }
 
             .rightActions {
                 display: inline-block;
-                text-align: justify;
-                text-align-last: center;
-                width: 25%;
+                float: right;
+                width: auto;
             }
 
             .votes, .subComments, .expand, .respondButton, .moreButton, .upvoteButton, .downvoteButton {
@@ -92,10 +97,9 @@
             }
 
             iron-icon{
-                height: 12px;
-                width: 12px;
+                height: 14px;
+                width: 14px;
                 margin-bottom: 2px;
-                margin-right: 4px;
                 opacity: 0.84;
                 color: #000000;
             }
@@ -105,17 +109,14 @@
                 --iron-icon-width: 5px;
             }
 
-            .sideIcon {
-                height: 20px;
-                width: 20px;
-                margin-bottom: 2px;
-                margin-right: 4px;
-                opacity: 0.84;
+            paper-icon-button {
+                height: 30px;
+                width: 30px;
                 color: #000000;
             }
         </style>
 
-        <div class="card">
+        <div id="card" class="card" on-click="_commentSelected">
             <div class="commentHeader">
                 <div class="userName">
                     [[userName]]
@@ -127,34 +128,36 @@
             <div class="text">
                 [[commentText]]
             </div>
-            <div class="commentFooter">
+            <div class="actionFooter" id="actionFooter" style="display: none;">
                 <div class="leftActions">
                     <div class="upvoteButton">
                         <paper-icon-button class="paperBtn" on-click="_upvoteComment" icon="arrow-upward"></paper-icon-button>
                     </div>
                     <div class="downvoteButton">
-                        <paper-icon-button class="paperBtn"  icon="arrow-downward"></paper-icon-button>
+                        <paper-icon-button on-click="_stopPropagation" class="paperBtn"  icon="arrow-downward"></paper-icon-button>
                     </div>
                 </div>
+                <div class="rightActions">
+                    <div class="respondButton">
+                        <paper-icon-button on-click="_stopPropagation" icon="reply"></paper-icon-button>
+                    </div>
+                    <div class="moreButton">
+                        <paper-icon-button on-click="_stopPropagation" icon="more-vert"></paper-icon-button>
+                    </div>
+                </div>
+            </div>
+            <div class="commentFooter">
                 <div class="centerActions">
                     <div class="votes">
                         <iron-icon icon="arrow-upward"></iron-icon>
                         [[upVotes]]
                     </div>
                     <div class="expand">
-                        <iron-icon icon="remove"></iron-icon>
+                        <iron-icon id="expandIcon" icon="unfold-more"></iron-icon>
                     </div>
                     <div class="subComments">
                         <iron-icon icon="editor:mode-comment"></iron-icon>
                         5
-                    </div>
-                </div>
-                <div class="rightActions">
-                    <div class="respondButton">
-                        <iron-icon class="sideIcon" icon="reply"></iron-icon>
-                    </div>
-                    <div class="moreButton">
-                        <iron-icon class="sideIcon" icon="more-vert"></iron-icon>
                     </div>
                 </div>
             </div>
@@ -192,6 +195,10 @@
                         type: String,
                         observer: '_keyChanged',
                     },
+                    commentSelected: {
+                        type: Boolean,
+                        value: false,
+                    },
                 };
             }
 
@@ -214,6 +221,7 @@
             }
 
             _upvoteComment() {
+                this._stopPropagation();
                 var that = this;
                 // eslint-disable-next-line
                 var upVotes = firebase.database()
@@ -224,6 +232,27 @@
                         'upVotes': upVotesCount + 1,
                     });
                 });
+            }
+
+            _commentSelected() {
+                var footer = this.$.actionFooter;
+                var expandIcon = this.$.expandIcon;
+                var card = this.$.card;
+                if(this.commentSelected === false) {
+                    this.commentSelected = true;
+                    footer.setAttribute('style', 'display:visible;');
+                    expandIcon.setAttribute('icon', 'unfold-less');
+                    card.setAttribute('style', 'background-color: #ecedef;');
+                } else {
+                    this.commentSelected = false;
+                    footer.setAttribute('style', 'display:none;');
+                    expandIcon.setAttribute('icon', 'unfold-more');
+                    card.setAttribute('style', 'background-color: #f1f2f3;');
+                }
+            }
+
+            _stopPropagation() {
+                event.stopPropagation();
             }
         }
 
