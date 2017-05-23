@@ -51,7 +51,7 @@
                 <input type="file" id="files" name="files[]" on-change="_showImage" multiple />
             </div>
 
-            <paper-textarea id="text" label="Text" char-counter></paper-textarea>
+            <paper-textarea id="text" value="{{text::input}}" label="Text" char-counter></paper-textarea>
         </div>
     </template>
 
@@ -64,6 +64,11 @@
                     prop1: {
                         type: String,
                         value: 'feadr-add-post-section',
+                    },
+                    text: {
+                        type: String,
+                        value: null,
+                        notify: true,
                     },
                 };
             }
