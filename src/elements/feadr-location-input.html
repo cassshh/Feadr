@@ -8,6 +8,15 @@
       :host {
         display: block;
       }
+      #inputLocation {
+        width: 94%;
+        display: inline-block;
+      }
+      #locationIcon {
+        margin-bottom: -10px;
+        width: 5%;
+        cursor: pointer;
+      }
     </style>
 
     <google-maps-api id="maps" api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg" libraries="places"
@@ -23,6 +32,7 @@
             required$="[[required]]"
             error-message="Enter valid location">
     </paper-input>
+    <img id="locationIcon" alt="LocationIcon" on-click="_getLocation" src="../../images/svg/location.svg"/>
   </template>
 </dom-module>
 <script>
@@ -80,6 +90,20 @@
         this.place = place;
       });
     }
+
+      _getLocation() {
+          const input = this.$.inputLocation;
+          if (navigator.geolocation.getCurrentPosition(showPosition)) {
+              navigator.geolocation.getCurrentPosition(showPosition);
+          } else {
+              input.value = 'Geolocation is not supported by this browser.';
+          }
+
+          function showPosition(position) {
+              input.value = position.coords.latitude + ',' +
+                  position.coords.longitude;
+          }
+      }
   }
 
   window.customElements.define(FeadrLocationInput.is, FeadrLocationInput);
