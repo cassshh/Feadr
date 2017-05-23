@@ -67,9 +67,15 @@
     _onApiLoad() {
       const input = this.$.inputLocation;
       // eslint-disable-next-line
-      const searchBox = new google.maps.places.SearchBox(input);
-      searchBox.addListener('places_changed', () => {
-        this.place = searchBox.getPlaces();
+      const autocomplete = new google.maps.places.Autocomplete(input);
+      google.maps.event.addListener(autocomplete, 'place_changed', () => {
+        const place = autocomplete.getPlace();
+
+        if(!place.geometry) {
+          // Message no location selected
+          return;
+        }
+        this.place = place;
       });
     }
   }
