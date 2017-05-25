@@ -41,24 +41,22 @@
             }
         </style>
         <div id="addPost">
-                <form id="myForm" method="get">
-                    <paper-input id="title" label="Title" name="title" char-counter maxlength="140"></paper-input><br>
+            <form id="myForm" method="get">
+                <paper-input id="title" label="Title" name="title" value="{{title::input}}" char-counter maxlength="140"></paper-input><br>
 
-                    <feadr-location-input place="{{place}}"></feadr-location-input>
+                <feadr-location-input place="{{place}}"></feadr-location-input>
 
-                    <paper-chip-input label="+Add tags" items='[]' closable></paper-chip-input><br>
+                <paper-chip-input label="+Add tags" items='[]' closable></paper-chip-input><br>
 
-                    <div id="sectionsContainer">
-                        <div id="sections">
-                            <feadr-add-post-section text="{{text}}"></feadr-add-post-section>
-                        </div>
-                        <div id="addBtn">
-                            <paper-fab icon="add" on-click="_addSection"></paper-fab>
-                        </div>
-                    </div><br>
-
-                    <paper-button id="submit-btn" type="submit" on-click="_addPost">Submit</paper-button>
-                </form>
+                <div id="sectionsContainer">
+                    <div id="sections">
+                        <feadr-add-post-section text="{{text}}"></feadr-add-post-section>
+                    </div>
+                    <div id="addBtn">
+                        <paper-fab icon="add" on-click="_addSection"></paper-fab>
+                    </div>
+                </div><br>
+            </form>
             </iron-form>
         </div>
     </template>
@@ -73,13 +71,17 @@
                         type: String,
                         value: 'feadr-add-post',
                     },
+                    title: {
+                        type: String,
+                        notify: true,
+                    },
                     place: {
                         type: Object,
-                        reflectToAttribute: true,
+                        notify: true,
                     },
                     text: {
                         type: String,
-                        reflectToAttribute: true,
+                        notify: true,
                     },
                 };
             }
@@ -87,32 +89,6 @@
                 var sections = this.$.sections;
                 var section = document.createElement('feadr-add-post-section');
                 sections.insertBefore(section, null);
-            }
-            _addPost() {
-                var title = this.$.title.value;
-                var location = this.place;
-                var text = this.text;
-                const obj = {
-                    location: {
-                        long: '',
-                        lat: '',
-                        name: location.formatted_address,
-                    },
-                    content: {
-                        section1: {
-                            images: {
-                            },
-                            text: text,
-                        },
-                    },
-                    title: title,
-                    username: '',
-                    user_uid: '',
-                    // eslint-disable-next-line
-                    time: firebase.database.ServerValue.TIMESTAMP,
-                };
-                // eslint-disable-next-line
-                database.ref('queue/posts').push().set(obj);
             }
         }
 
