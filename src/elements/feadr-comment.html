@@ -225,16 +225,20 @@
       }
 
       _upvoteComment() {
-        this._stopPropagation();
-        var that = this;
         // eslint-disable-next-line
-        var upVotes = firebase.database()
-            .ref('comments/posts/' + this.postid + '/' + that.key);
+        var upVotes = database
+            .ref('comments/posts/' + this.postid + '/' + this.key);
         upVotes.once('value', function(snapshot) {
           var upVotesCount = snapshot.val().upVotes;
-          upVotes.update({
-            'upVotes': upVotesCount + 1,
-          });
+          if (upVotesCount) {
+            upVotes.update({
+              'upVotes': upVotesCount + 1,
+            });
+          } else {
+            upVotes.update({
+              'upVotes': 1,
+            });
+          }
         });
       }
 

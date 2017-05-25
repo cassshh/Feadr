@@ -64,7 +64,7 @@
           <!-- right aligned icons -->
           <div main-title></div>
           <div class="rightIcons">
-            <paper-icon-button icon="arrow-upward"></paper-icon-button>
+            <paper-icon-button icon="arrow-upward" on-click="_upvotePost"></paper-icon-button>
             <paper-icon-button icon="arrow-downward"></paper-icon-button>
             <paper-icon-button icon="favorite"></paper-icon-button>
             <paper-icon-button icon="more-vert"></paper-icon-button>
@@ -163,6 +163,23 @@
             }
           } else {
             this.$.ironLocation.set('path', '/404');
+          }
+        });
+      }
+
+      _upvotePost() {
+        // eslint-disable-next-line
+        var points = database.ref('overview/' + this.postid);
+        points.once('value', function(snapshot) {
+          var upVotesCount = snapshot.val().points;
+          if (upVotesCount) {
+            points.update({
+              'points': upVotesCount + 1,
+            });
+          } else {
+            points.update({
+              'points': 1,
+            });
           }
         });
       }
