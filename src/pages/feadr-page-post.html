@@ -82,7 +82,7 @@
           </feadr-post-details>
           <!-- TODO repeat for amount of sections-->
           <feadr-post-section></feadr-post-section>
-          <feadr-post-footer total-comments="[[totalComments]]"></feadr-post-footer>
+          <feadr-post-footer total-comments="[[totalComments]]" upvotes="[[upvotes]]"></feadr-post-footer>
         </div>
         <div class="postComment">
           <feadr-add-comment postid="[[postid]]"></feadr-add-comment>
@@ -120,6 +120,9 @@
           totalComments: {
             type: Number,
           },
+          upvotes: {
+            type: Number,
+          },
           listener: Object,
         };
       }
@@ -146,6 +149,7 @@
         database.ref('posts/' + this.postid).once('value', (snapshot) => {
           if (snapshot.val() !== null) {
             this.post = snapshot.val();
+            this.upvotes = snapshot.val().points;
             const d1 = new Date();
             const d2 = new Date(this.post.time);
             const diff = d1 - d2;
@@ -170,14 +174,25 @@
       _upvotePost() {
         // eslint-disable-next-line
         var points = database.ref('overview/' + this.postid);
+        // eslint-disable-next-line
+        var pointsPost = database.ref('posts/' + this.postid);
+        var that = this;
         points.once('value', function(snapshot) {
-          var upVotesCount = snapshot.val().points;
-          if (upVotesCount) {
+          var pointsCount = snapshot.val().points;
+          that.upvotes = pointsCount + 1;
+          if (pointsCount) {
             points.update({
-              'points': upVotesCount + 1,
+              'points': pointsCount + 1,
+            });
+            pointsPost.update({
+              'points': pointsCount + 1,
             });
           } else {
+            that.upvotes = 1;
             points.update({
+              'points': 1,
+            });
+            pointsPost.update({
               'points': 1,
             });
           }
