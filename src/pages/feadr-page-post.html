@@ -145,7 +145,6 @@
       }
 
       getPostData() {
-        // eslint-disable-next-line
         database.ref('posts/' + this.postid).once('value', (snapshot) => {
           if (snapshot.val() !== null) {
             this.post = snapshot.val();
@@ -172,9 +171,7 @@
       }
 
       _upvotePost() {
-        // eslint-disable-next-line
         var points = database.ref('overview/' + this.postid);
-        // eslint-disable-next-line
         var pointsPost = database.ref('posts/' + this.postid);
         var that = this;
         points.once('value', function(snapshot) {
@@ -200,7 +197,6 @@
       }
 
       getComments() {
-        // eslint-disable-next-line
         database.ref('comments/posts/' + this.postid).on('value', (snapshot) => {
           this.key = [];
           if (snapshot.val() !== null) {

@@ -30,12 +30,12 @@
     <iron-pages
             attr-for-selected="name"
             selected="[[page]]"
-            fallback-selection="fallback"
-            >
+            fallback-selection="fallback">
       <feadr-page-overview name="overview"></feadr-page-overview>
       <feadr-page-discover name="discover"></feadr-page-discover>
       <feadr-page-add-post name="add-post"></feadr-page-add-post>
       <feadr-page-post name="post" page="[[page]]" postid="{{subpage}}"></feadr-page-post>
+      <feadr-page-profile name="profile"></feadr-page-profile>
       <feadr-page-404 name="fallback" error="[[subpage]]"></feadr-page-404>
     </iron-pages>
   </template>
@@ -48,13 +48,27 @@
 
       constructor() {
         super();
-        // Get root pattern for app-route, for more info about `rootPath` see:
-        // https://www.polymer-project.org/2.0/docs/upgrade#urls-in-templates
-        // this.rootPattern = (new URL(this.rootPath)).pathname;
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            // User is signed in.
+            console.log('Signed in');
+            this.user = user;
+          } else {
+            // No user is signed in.
+            console.log('No user');
+            this.user = null;
+          }
+        });
+
+        this.addEventListener('signIn', this.signIn);
       }
 
       static get properties() {
         return {
+          user: {
+            type: Object,
+            value: null,
+          },
           page: {
             type: String,
             reflectToAttribute: true,
@@ -74,6 +88,47 @@
           '_routePageChanged(routeData.page)',
           '_routeSubPageChanged(subrouteData.subpage)',
         ];
+      }
+
+      signIn(e) {
+        let provider = null;
+        switch (e.detail.provider) {
+          case 'google':
+            provider = new firebase.auth.GoogleAuthProvider();
+            break;
+          default:
+            return;
+        }
+        firebase.auth().signInWithRedirect(provider);
+        firebase.auth().getRedirectResult().then((result) => {
+          if (result.credential) {
+            // This gives you a Google Access Token.
+            // You can use it to access the Google API.
+            console.log('fireauth token: ' + result.credential.accessToken);
+          }
+          // The signed-in user info.
+          console.log('fireauth user: ' + result.user);
+        }).catch((error) => {
+          // Handle Erros
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          const credential = error.credential;
+          console.log('fireauth error: ' + errorCode
+              + ' ' + errorMessage + ' ' + email + ' ' + credential);
+        });
+      }
+
+      signOut() {
+        firebase.auth().signOut().then(() => {
+          // Success
+          console.log('Logged out');
+        }, (error) => {
+          // Error
+          console.log('Logout error: ' + error);
+        });
       }
 
       _routePageChanged(page) {

@@ -110,10 +110,8 @@
           title: title,
           user_uid: 'AS1J4kl',
           username: 'cassshh',
-          // eslint-disable-next-line
           time: firebase.database.ServerValue.TIMESTAMP,
         };
-        // eslint-disable-next-line
         database.ref('queue/posts').push().set(obj);
       }
     }

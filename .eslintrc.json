@@ -13,6 +13,7 @@
     "brace-style": "off",
     "new-cap": ["error", { "capIsNewExceptions": ["Polymer"] }],
     "no-var": "off",
+    "no-undef": "off",
     "require-jsdoc": "off",
     "linebreak-style": "off",
 //    For debugging purpuses
