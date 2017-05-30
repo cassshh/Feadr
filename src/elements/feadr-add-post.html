@@ -50,7 +50,7 @@
 
                 <div id="sectionsContainer">
                     <div id="sections">
-                        <feadr-add-post-section text="{{text}}"></feadr-add-post-section>
+                        <feadr-add-post-section text="{{text}}" images="{{images}}"></feadr-add-post-section>
                     </div>
                     <div id="addBtn">
                         <paper-fab icon="add" on-click="_addSection"></paper-fab>
@@ -81,6 +81,10 @@
                     },
                     text: {
                         type: String,
+                        notify: true,
+                    },
+                    images: {
+                        type: Object,
                         notify: true,
                     },
                 };
