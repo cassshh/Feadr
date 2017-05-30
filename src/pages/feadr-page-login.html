@@ -68,7 +68,6 @@
             }
 
             signIn(e) {
-                console.log('heuhe');
                 const prov = e.target.getAttribute('data-provider');
                 this.dispatchEvent(new CustomEvent('signIn', {
                     bubbles: true,
