@@ -1,11 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <!-- import the module  -->
 <link rel="import" href="shared-styles.html">
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <dom-module id="feadr-app">
     <template>
@@ -42,7 +42,7 @@
             <feadr-page-add-post name="add-post"></feadr-page-add-post>
             <feadr-page-post name="post" page="[[page]]" postid="{{subpage}}"></feadr-page-post>
             <feadr-page-login name="login"></feadr-page-login>
-            <feadr-page-404 name="fallback" error="[[subpage]]"></feadr-page-404>
+            <feadr-page-404 name="fallback"></feadr-page-404>
         </iron-pages>
     </template>
 
@@ -59,6 +59,11 @@
                         // User is signed in.
                         console.log('Signed in');
                         this.user = user;
+                        if (this.page === 'login') {
+                            this.dispatchEvent(new CustomEvent('requestChangePage', {
+                                detail: {route: '/'},
+                            }));
+                        }
                     } else {
                         // No user is signed in.
                         console.log('No user');
@@ -67,6 +72,7 @@
                 });
 
                 this.addEventListener('signIn', this.signIn);
+                this.addEventListener('requestChangePage', this._changePage);
             }
 
             static get properties() {
@@ -135,6 +141,11 @@
                     // Error
                     console.log('Logout error: ' + error);
                 });
+            }
+
+            _changePage(e) {
+                console.log('requested new page');
+                this.set('route.path', e.detail.route);
             }
 
             _routePageChanged(page) {

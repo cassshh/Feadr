@@ -61,7 +61,11 @@
 
             handleTap(e) {
                 const key = e.target.getAttribute('key');
-                this.$.ironLocation.set('path', '/post/' + key);
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {route: '/post/' + key},
+                }));
             }
 
             ready() {
