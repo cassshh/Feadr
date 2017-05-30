@@ -7,74 +7,74 @@
 <link rel="import" href="../feadr-app/shared-styles.html">
 
 <dom-module id="feadr-page-overview">
-  <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-      }
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
 
-      #list {
-        @apply (--layout-flex);
-        --iron-list-items-container: {
-          max-width: 800px;
-          margin: 0 auto;
-        };
-      }
+            #list {
+                @apply (--layout-flex);
+                --iron-list-items-container: {
+                    max-width: 800px;
+                    margin: 0 auto;
+                };
+            }
 
-      .post {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-      }
+            .post {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+            }
 
-    </style>
-    <iron-location id="ironLocation"></iron-location>
-    <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
-      <template>
-        <feadr-post-overview class="post"
-                             on-tap="handleTap"
-                             key$="[[post.key]]"
-                             title$="[[post.val.title]]"
-                             username$="[[post.val.username]]"
-                             location$="[[post.val.location.name]]"
-                             time$="[[post.val.time]]"
-                             points$="[[post.val.points]]"
-                             thumbnail$="[[post.val.thumbnail]]">
-        </feadr-post-overview>
-      </template>
-    </iron-list>
-  </template>
+        </style>
+        <iron-location id="ironLocation"></iron-location>
+        <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
+            <template>
+                <feadr-post-overview class="post"
+                                     on-tap="handleTap"
+                                     key$="[[post.key]]"
+                                     title$="[[post.val.title]]"
+                                     username$="[[post.val.username]]"
+                                     location$="[[post.val.location.name]]"
+                                     time$="[[post.val.time]]"
+                                     points$="[[post.val.points]]"
+                                     thumbnail$="[[post.val.thumbnail]]">
+                </feadr-post-overview>
+            </template>
+        </iron-list>
+    </template>
 
-  <script>
-    class FeadrOverview extends Polymer.Element {
-      static get is() {
-        return 'feadr-page-overview';
-      }
+    <script>
+        class FeadrOverview extends Polymer.Element {
+            static get is() {
+                return 'feadr-page-overview';
+            }
 
-      static get properties() {
-        return {
-          posts: {
-            type: Array,
-            value: [],
-            notify: true,
-          },
-        };
-      }
+            static get properties() {
+                return {
+                    posts: {
+                        type: Array,
+                        value: [],
+                        notify: true,
+                    },
+                };
+            }
 
-      handleTap(e) {
-        const key = e.target.getAttribute('key');
-        this.$.ironLocation.set('path', '/post/'+key);
-      }
+            handleTap(e) {
+                const key = e.target.getAttribute('key');
+                this.$.ironLocation.set('path', '/post/' + key);
+            }
 
-      ready() {
-        super.ready();
-        database.ref('overview').on('child_added', (snapshot) => {
-          this.push('posts', {
-            key: snapshot.key,
-            val: snapshot.val(),
-          });
-        });
-      }
-    }
+            ready() {
+                super.ready();
+                database.ref('overview').on('child_added', (snapshot) => {
+                    this.push('posts', {
+                        key: snapshot.key,
+                        val: snapshot.val(),
+                    });
+                });
+            }
+        }
 
-    window.customElements.define(FeadrOverview.is, FeadrOverview);
-  </script>
+        window.customElements.define(FeadrOverview.is, FeadrOverview);
+    </script>
 </dom-module>

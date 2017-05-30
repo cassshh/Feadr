@@ -1,89 +1,92 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-  <title>Feadr</title>
-  <meta name="description" content="Feadr || The New Network">
+    <title>Feadr</title>
+    <meta name="description" content="Feadr || The New Network">
 
-  <!-- See https://goo.gl/OOhYW5 -->
-  <link rel="manifest" href="/manifest.json">
+    <!-- See https://goo.gl/OOhYW5 -->
+    <link rel="manifest" href="/manifest.json">
 
-  <!-- See https://goo.gl/qRE0vM -->
-  <meta name="theme-color" content="#834D9B">
+    <!-- See https://goo.gl/qRE0vM -->
+    <meta name="theme-color" content="#834D9B">
 
-  <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Feadr">
+    <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Feadr">
 
-  <!-- Add to homescreen for Safari on iOS -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Feadr">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Feadr">
 
-  <!-- Homescreen icons -->
-  <!--<link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">-->
+    <!-- Homescreen icons -->
+    <!--<link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">-->
 
-  <!-- Tile icon for Windows 8 (144x144 + tile color) -->
-  <!--<meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
-  <meta name="msapplication-TileColor" content="#3f51b5">
-  <meta name="msapplication-tap-highlight" content="no">-->
+    <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+    <!--<meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#3f51b5">
+    <meta name="msapplication-tap-highlight" content="no">-->
 
-  <!-- Load and register pre-caching Service Worker -->
-  <!--<script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js');
-      });
-    }
-  </script>-->
+    <!-- Load and register pre-caching Service Worker -->
+    <!--<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/service-worker.js');
+        });
+      }
+    </script>-->
 
-  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
-  <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
-  <!-- Load application shell -->
-  <link rel="import" href="/src/feadr-app/feadr-app.html">
+    <!-- Load application shell -->
+    <link rel="import" href="/src/feadr-app/feadr-app.html">
 
-  <!--Load firebase script. -->
-  <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
-  <script src="/scripts/config.js"></script>
-  <script>
-    // eslint-disable-next-line
-    firebase.initializeApp(config);
-    // eslint-disable-next-line
-    const database = firebase.database();
-  </script>
+    <!--Load firebase script. -->
+    <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script>
+        firebase.initializeApp(config);
+        // eslint-disable-next-line
+        const database = firebase.database();
+    </script>
 
-  <!-- Add any global styles for body, document, etc. -->
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      color: #212121;
-      background-color: #f5f5f5;
-    }
+    <!-- Add any global styles for body, document, etc. -->
+    <style>
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', 'Noto', sans-serif;
+            color: #212121;
+            background-color: #f5f5f5;
+        }
 
-    .noscript {
-      margin: 0 auto;
-      text-align: center;
-    }
+        .noscript {
+            margin: 0 auto;
+            text-align: center;
+        }
 
-    .noscript h1, .noscript h3 {
-      margin: 20px 50px 0 50px;
-      letter-spacing: 0.1em;
-    }
-  </style>
+        .noscript h1, .noscript h3 {
+            margin: 20px 50px 0 50px;
+            letter-spacing: 0.1em;
+        }
+    </style>
 </head>
 <body>
 <feadr-app></feadr-app>
 <noscript class="noscript">
-  <h1>You have JavaScript disabled :(</h1>
-  <h3>Please enable JavaScript to use this website</h3>
+    <h1>You have JavaScript disabled :(</h1>
+    <h3>Please enable JavaScript to use this website</h3>
 </noscript>
 </body>
 </html>
