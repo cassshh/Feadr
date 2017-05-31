@@ -225,6 +225,7 @@
       }
 
       _upvoteComment() {
+        this._stopPropagation();
         // eslint-disable-next-line
         var upVotes = database
             .ref('comments/posts/' + this.postid + '/' + this.key);
