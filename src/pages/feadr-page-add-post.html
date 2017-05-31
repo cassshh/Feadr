@@ -95,53 +95,52 @@
                 const app = document.querySelector('feadr-app');
                 if (app.user) {
                     // User is logged in :)
+                    var newPostRef = database.ref('queue/posts').push();
                     var title = this.title;
                     var location = this.place;
                     var text = this.text;
-                    var imageUrls = [];
+                    let url = [];
+                    let promises = [];
 
                     const storageRef = firebase.storage().ref();
-                    for(const img of this.images) {
-                        const uploadTask = storageRef.
-                            child(title + '/' + img.name).put(img);
-                        uploadTask.on(firebase.storage.TaskEvent.
-                            STATE_CHANGED, (snapshot) => {
-                            // blub
-                        }, (error) => {
-                            // error stuffies
-                        }, () => {
-                            imageUrls.push(uploadTask.snapshot.downloadURL);
-                        });
+                    for (const img of this.images) {
+                        promises.push(storageRef
+                            .child('posts/' + newPostRef.key + '/' + img.name)
+                            .put(img));
                     }
-                    console.log(imageUrls);
-                    const newUrls = imageUrls.reduce((acc, cur, i) => {
-                        acc[i] = cur;
-                        return acc;
-                    }, {});
-                    console.log(newUrls);
-                    const obj = {
-                        location: {
-                            place_id: location.place_id,
-                            name: location.name,
-                            formatted_address: location.formatted_address,
-                            address_components: location.address_components,
-                            geometry: {
-                                lng: location.geometry.location.lng(),
-                                lat: location.geometry.location.lat(),
+                    Promise.all(promises).then((results) => {
+                        for (const result of results) {
+                            url.push(result.task.snapshot.downloadURL);
+                        }
+                    }).then(() => {
+                        const newUrls = url.reduce((acc, cur, i) => {
+                            acc[i] = cur;
+                            return acc;
+                        }, {});
+                        const obj = {
+                            location: {
+                                place_id: location.place_id,
+                                name: location.name,
+                                formatted_address: location.formatted_address,
+                                address_components: location.address_components,
+                                geometry: {
+                                    lng: location.geometry.location.lng(),
+                                    lat: location.geometry.location.lat(),
+                                },
                             },
-                        },
-                        content: {
-                            section1: {
-                                images: newUrls,
-                                text: text,
+                            content: {
+                                section1: {
+                                    images: newUrls,
+                                    text: text,
+                                },
                             },
-                        },
-                        title: title,
-                        user_uid: app.user.uid,
-                        username: app.user.displayName,
-                        time: firebase.database.ServerValue.TIMESTAMP,
-                    };
-                    database.ref('queue/posts').push().set(obj);
+                            title: title,
+                            user_uid: app.user.uid,
+                            username: app.user.displayName,
+                            time: firebase.database.ServerValue.TIMESTAMP,
+                        };
+                        newPostRef.set(obj);
+                    });
                 }
             }
         }
