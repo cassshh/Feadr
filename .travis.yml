@@ -13,7 +13,7 @@ node_js:
 #- '5'
 #- '4'
 before_script:
-- npm install -g bower polymer-cli@next firebase-tools
+- npm install -g bower polymer-cli@next firebase-tools web-animations-js
 - bower install
 script:
 - ./travis_scripts/firebase_generate_config.sh > scripts/config.js
