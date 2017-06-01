@@ -1,8 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
 <link rel="import" href="../elements/feadr-post-overview.html">
+<link rel="import" href="../elements/feadr-area-input.html">
 <link rel="import" href="../feadr-app/shared-styles.html">
-
+<!--TODO When changing the location make the list appear empty-->
 <dom-module id="feadr-page-discover">
   <template>
     <style include="shared-styles">
@@ -10,77 +14,88 @@
         display: block;
       }
 
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 4px;
+      #list {
+        @apply (--layout-flex);
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: 0 auto;
+        };
       }
 
-      paper-card {
-        width: 100%;
-        margin: 2px 0;
+      .post {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
       }
     </style>
-    <div class="container">
-      <template is="dom-repeat" items="[[posts]]" as="post">
-        <paper-card>
-          <feadr-post-overview class="post"
-                               title="[[post.title]]"
-                               username="[[post.username]]"
-                               location="[[post.location.name]]"
-                               time="[[post.time]]"
-                               points="[[post.points]]"
-                               thumbnail="[[post.thumbnail]]">
-          </feadr-post-overview>
-        </paper-card>
+    <feadr-area-input location="{{area}}" areaselect="{{type}}"></feadr-area-input>
+    <iron-location id="ironLocation"></iron-location>
+    <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">
+      <template>
+        <feadr-post-overview class="post"
+                             on-tap="handleTap"
+                             key$="[[post.key]]"
+                             title$="[[post.val.title]]"
+                             username$="[[post.val.username]]"
+                             location$="[[post.val.location.name]]"
+                             time$="[[post.val.time]]"
+                             points$="[[post.val.points]]"
+                             thumbnail$="[[post.val.thumbnail]]">
+        </feadr-post-overview>
       </template>
-    </div>
+    </iron-list>
   </template>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg&libraries=geometry"></script>
   <script>
-    class FeadrDiscover extends Polymer.Element {
-        static get is() {
-            return 'feadr-page-discover';
-        }
+      class FeadrDiscover extends Polymer.Element {
+          static get is() {
+              return 'feadr-page-discover';
+          }
 
-        static get properties() {
-            return {
-                posts: {
-                    type: Array,
-                    value: [],
-                    notify: true,
-                },
-            };
-        }
+          static get properties() {
+              return {
+                  posts: {
+                      type: Array,
+                      value: [],
+                      notify: true,
+                  },
+                  location: {
+                      type: String,
+                  },
+                  areaselect: {
+                      type: String,
+                  },
+              };
+          }
 
-        ready() {
-            super.ready();
-            // let maxdistance = 15;
-            // eslint-disable-next-line
-            database.ref('overview').on('child_added', (snapshot) => {
-                let lat = snapshot.val().location.lat;
-                let long = snapshot.val().location.long;
-                if(long > 0 || long < 0 || lat > 0 || lat < 0) {
-                    console.log('something in between');
-                    if(calculateDistanceBetween(lat, long) < 15) {
-                        console.log('something something');
-                        this.push('posts', snapshot.val());
-                    }
-                }
-            });
-            function calculateDistanceBetween(lat, long) {
-                // eslint-disable-next-line
-                const mainLocation = new google.maps.LatLng(52.778217, 6.912128);
-                // eslint-disable-next-line
-                let nearbyLocation = new google.maps.LatLng(lat, long);
-                return calcDistance(mainLocation, nearbyLocation);
-                function calcDistance(mainLocation, nearbyLocation) {
-                    // eslint-disable-next-line
-                    return (google.maps.geometry.spherical.computeDistanceBetween(mainLocation, nearbyLocation) / 1000).toFixed(2);
-                }
-            }
-        }
-    }
-    window.customElements.define(FeadrDiscover.is, FeadrDiscover);
+          static get observers() {
+              return [
+                  '_changedType(type, area)',
+              ];
+          }
+
+          handleTap(e) {
+              const key = e.target.getAttribute('key');
+              this.$.ironLocation.set('path', '/post/'+key);
+          }
+          _changedType(type, area) {
+              if(type.length > 0 && area.length > 0 ) {
+//                 splice the array so there is room for new content
+//                  console.log('Array will be spliced');
+                  this.splice('posts', 0, this.posts.length);
+//                  console.log('the array posts equals: ' + this.posts.length);
+//                 eslint-disable-next-line
+                database.ref('location/'+type+'/'+area+'/posts/').on('child_added', (snapshot) => {
+                      console.log(snapshot.val());
+                      this.push('posts', {
+                          key: snapshot.key,
+                          val: snapshot.val(),
+                      });
+                  });
+                  console.log(this.posts);
+              }
+          }
+          ready() {
+              super.ready();
+          }
+      }
+      window.customElements.define(FeadrDiscover.is, FeadrDiscover);
   </script>
 </dom-module>

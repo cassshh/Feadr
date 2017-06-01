@@ -1,0 +1,93 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="feadr-area-input">
+    <template>
+        <style>
+            paper-dropdown-menu, paper-listbox {
+                width: 250px;
+            }
+            paper-dropdown-menu {
+                height: 200px;
+                margin: auto;
+                display: block;
+            }
+
+        </style>
+            <div>{{location}}</div>
+            <div>{{areaselect}}</div>
+            <paper-dropdown-menu label="Area selector">
+                <paper-listbox slot="dropdown-content" selected="{{selectedArea}}">
+                    <paper-item>Route</paper-item>
+                    <paper-item>City</paper-item>
+                    <paper-item>Locality</paper-item>
+                    <paper-item>Province</paper-item>
+                    <paper-item>Country</paper-item>
+                    <paper-item>Postal</paper-item>
+                </paper-listbox>
+            </paper-dropdown-menu>
+    </template>
+    <script>
+        class FeadrAreaInput extends Polymer.Element {
+            static get is() {return 'feadr-area-input';}
+            static get properties() {
+                return {
+                    selectedArea: {
+                        type: Number,
+                        value: 0,
+                        observer: '_getGeoLocation',
+                    },
+                    location: {
+                        type: String,
+                        value: '',
+                        notify: true,
+                        readOnly: false,
+                    },
+                    areaselect: {
+                        type: String,
+                        value: '',
+                        notify: true,
+                        readOnly: false,
+                    },
+                };
+            }
+            ready() {
+                    super.ready();
+                    // alert('hello');
+            }
+
+            _getGeoLocation(newIndex) {
+                let self = this;
+                new Promise(function(resolve, reject) {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(resolve);
+                    }
+                    else {
+                        reject('Something went wrong');
+                    }
+                }).then(function(result) {
+                    fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+result.coords.latitude+','+ result.coords.longitude+'&key=AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg')
+                        .then(function(fetchedData) {
+                            if(fetchedData.status !== 200) {
+                                console.log('something went wrong');
+                            }
+                                return fetchedData.json();
+                        }).then(function(data) {
+                            self.setProperties({
+                                // eslint-disable-next-line
+                                location: data.results[0].address_components[newIndex+1].long_name,
+                                // eslint-disable-next-line
+                                areaselect: data.results[0].address_components[newIndex+1].types[0],
+                            });
+                    });
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        }
+        window.customElements.define(FeadrAreaInput.is, FeadrAreaInput);
+    </script>
+</dom-module>
