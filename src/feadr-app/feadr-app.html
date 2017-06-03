@@ -116,7 +116,7 @@
                         this.user = user;
                         if (this.page === 'login') {
                             this.dispatchEvent(new CustomEvent('requestChangePage', {
-                                detail: {route: '/'},
+                                detail: {route: '/', replace: true},
                             }));
                         }
                     } else {
@@ -236,7 +236,11 @@
             _changePage(e) {
                 console.log('requested new page');
                 // this.set('route.path', e.detail.route);
-                window.history.pushState({}, null, e.detail.route);
+                if(e.detail.replace) {
+                    window.history.replaceState({}, null, e.detail.route);
+                } else {
+                    window.history.pushState({}, null, e.detail.route);
+                }
                 window.dispatchEvent(new CustomEvent('location-changed'));
             }
 
