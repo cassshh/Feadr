@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/google-apis/google-maps-api.html">
 <!-- import the module  -->
 <link rel="import" href="shared-styles.html">
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">-->
@@ -20,6 +21,10 @@
             }
 
         </style>
+        <google-maps-api api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg"
+                         version="3.exp"
+                         on-api-load="_onApiLoad"
+                         language="en-us"></google-maps-api>
         <app-location route="{{route}}"></app-location>
         <app-route
                 route="{{route}}"
@@ -37,7 +42,9 @@
                 attr-for-selected="name"
                 selected="[[page]]"
                 fallback-selection="fallback">
-            <feadr-page-overview name="overview"></feadr-page-overview>
+            <feadr-page-overview name="overview" loading="{{loading}}"
+                                 location-state="{{locationState}}"
+                                 location-data="{{locationData}}"></feadr-page-overview>
             <feadr-page-discover name="discover"></feadr-page-discover>
             <feadr-page-add-post name="add-post"></feadr-page-add-post>
             <feadr-page-post name="post" page="[[page]]" postid="{{subpage}}"></feadr-page-post>
@@ -52,34 +59,32 @@
                 return 'feadr-app';
             }
 
-            constructor() {
-                super();
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (user) {
-                        // User is signed in.
-                        console.log('Signed in');
-                        this.user = user;
-                        if (this.page === 'login') {
-                            this.dispatchEvent(new CustomEvent('requestChangePage', {
-                                detail: {route: '/'},
-                            }));
-                        }
-                    } else {
-                        // No user is signed in.
-                        console.log('No user');
-                        this.user = null;
-                    }
-                });
-
-                this.addEventListener('signIn', this.signIn);
-                this.addEventListener('requestChangePage', this._changePage);
-            }
-
             static get properties() {
                 return {
                     user: {
                         type: Object,
                         value: null,
+                    },
+                    loading: {
+                        type: Boolean,
+                        value: true,
+                        notify: true,
+                    },
+                    locationState: {
+                        type: String,
+                        value: null,
+                        notify: true,
+                        observer: '_locationStateChanged',
+                    },
+                    location: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                    },
+                    locationData: {
+                        type: Object,
+                        value: null,
+                        notify: true,
                     },
                     page: {
                         type: String,
@@ -100,6 +105,91 @@
                     '_routePageChanged(routeData.page)',
                     '_routeSubPageChanged(subrouteData.subpage)',
                 ];
+            }
+
+            constructor() {
+                super();
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        // User is signed in.
+                        console.log('Signed in');
+                        this.user = user;
+                        if (this.page === 'login') {
+                            this.dispatchEvent(new CustomEvent('requestChangePage', {
+                                detail: {route: '/'},
+                            }));
+                        }
+                    } else {
+                        // No user is signed in.
+                        console.log('No user');
+                        this.user = null;
+                    }
+                });
+                this.addEventListener('signIn', this.signIn);
+                this.addEventListener('requestChangePage', this._changePage);
+                this.addEventListener('requestLocation', this.getLocation);
+            }
+
+            _onApiLoad() {
+                this.checkLocationPermission();
+            }
+
+            checkLocationPermission() {
+                // Check on permission to avoid direct prompt (unfriendly!!!)
+                navigator.permissions.query({name: 'geolocation'}).then((result) => {
+                    this.locationState = result.state;
+                    result.onchange = () => {
+                        this.locationState = result.state;
+                    };
+                });
+            }
+
+            _locationStateChanged(state) {
+                this.loading = true;
+                if (state === 'granted') {
+                    this.getLocation();
+                } else {
+                    this.loading = false;
+                }
+            }
+
+            getLocation() {
+                if ('geolocation' in navigator) {
+                    navigator.geolocation.getCurrentPosition((location) => {
+                        this.processLocation(location);
+                    });
+                    navigator.geolocation.watchPosition((location) => {
+                        this.processLocation(location);
+                    });
+                } else {
+                    console.log('Geolocation API not supported.');
+                    this.loading = false;
+                }
+            }
+
+            processLocation(location) {
+                if (this.location
+                    && this.location.coords.longitude === location.coords.longitude
+                    && this.location.coords.latitude === location.coords.latitude) {
+                    // Coordinates are the same, so unnecessary to use geocoder
+                    return;
+                }
+                this.location = location;
+                const geocoder = new google.maps.Geocoder;
+                geocoder.geocode({'location': {lat: location.coords.latitude, lng: location.coords.longitude}},
+                    (results, status) => {
+                        if (status === 'OK') {
+                            if (results[1]) {
+                                // 1 is a little more global
+                                this.locationData = results[1];
+                            } else {
+                                console.log('No results found');
+                            }
+                        } else {
+                            console.log('Geocoder failed due to: ' + status);
+                        }
+                        this.loading = false;
+                    });
             }
 
             signIn(e) {

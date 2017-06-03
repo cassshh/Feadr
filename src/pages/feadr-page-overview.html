@@ -2,7 +2,7 @@
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../elements/feadr-post-overview.html">
 <link rel="import" href="../feadr-app/shared-styles.html">
 
@@ -11,6 +11,7 @@
         <style include="shared-styles">
             :host {
                 display: block;
+                height: 100%;
             }
 
             #list {
@@ -25,22 +26,86 @@
                 border-bottom: 1px solid rgba(0, 0, 0, 0.12);
             }
 
+            .askLocationDataContainer {
+                background: linear-gradient(#352D4E, #544174);
+                height: 100%;
+            }
+
+            .starsContainer {
+                background: url('../../images/stars.png') repeat-x;
+                height: 100%;
+                text-align: center;
+                color: #F5F5F5;
+            }
+
+            .textContainer {
+                padding-top: 25%;
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+
+            .line {
+                margin-left: 10%;
+                margin-right: 10%;
+                opacity: 0.2;
+            }
+
+            .promptContainer {
+                padding-top: 10%;
+            }
+
+            .locationButton {
+                background-color: #F5F5F5;
+                color: #544174;
+                font-weight: bolder;
+            }
+
         </style>
-        <iron-location id="ironLocation"></iron-location>
-        <iron-list id="list" items="[[posts]]" as="post" scroll-target="document">
-            <template>
-                <feadr-post-overview class="post"
-                                     on-tap="handleTap"
-                                     key$="[[post.key]]"
-                                     title$="[[post.val.title]]"
-                                     username$="[[post.val.username]]"
-                                     location$="[[post.val.location.name]]"
-                                     time$="[[post.val.time]]"
-                                     points$="[[post.val.points]]"
-                                     thumbnail$="[[post.val.thumbnail]]">
-                </feadr-post-overview>
+        <template is="dom-if" if="{{isLoading}}">
+            <!-- Implement fancy spinner -->
+            Loading your precious data :)
+        </template>
+        <template is="dom-if" if="{{!loading}}">
+            <template is="dom-if" if="{{!locationData}}">
+                <!-- No location. Ask for data :) -->
+                <div class="askLocationDataContainer">
+                    <div class="starsContainer">
+                        <div class="textContainer">
+                            <h1>I have no location data :(</h1>
+                            <hr class="line"/>
+                            <h2>Please give me access to your GPS so I can feed you my relevant posts</h2>
+                        </div>
+                        <template is="dom-if" if="{{promptLocation}}">
+                            <div class="promptContainer">
+                                <paper-button class="locationButton" on-tap="requestLocation">Allow Location
+                                </paper-button>
+                            </div>
+                        </template>
+                        <template is="dom-if" if="{{!promptLocation}}">
+                            <div class="promptContainer">
+                                <span>You have <b>denied</b> location access. Please enable this.</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </template>
-        </iron-list>
+            <template is="dom-if" if="{{locationData}}">
+                <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">
+                    <template>
+                        <feadr-post-overview class="post"
+                                             on-tap="handleTap"
+                                             key$="[[post.key]]"
+                                             title$="[[post.val.title]]"
+                                             username$="[[post.val.username]]"
+                                             location$="[[post.val.location.name]]"
+                                             time$="[[post.val.time]]"
+                                             points$="[[post.val.points]]"
+                                             thumbnail$="[[post.val.thumbnail]]">
+                        </feadr-post-overview>
+                    </template>
+                </iron-list>
+            </template>
+        </template>
     </template>
 
     <script>
@@ -56,7 +121,87 @@
                         value: [],
                         notify: true,
                     },
+                    loadingData: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    isLoading: {
+                        type: Boolean,
+                        computed: 'computeLoading(loading, loadingData)',
+                    },
+                    promptLocation: {
+                        type: Boolean,
+                        computed: 'computeLocationPrompt(locationState)',
+                    },
                 };
+            }
+
+            static get observers() {
+                return [
+                    'locationDataChanged(locationData)',
+                ];
+            }
+
+            computeLocationPrompt(locationState) {
+                return locationState !== 'denied';
+            }
+
+            computeLoading(loading, loadingData) {
+                return loading || loadingData;
+            }
+
+            requestLocation() {
+                this.dispatchEvent(new CustomEvent('requestLocation', {
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
+
+            locationDataChanged(locationData) {
+                if (locationData) {
+                    this.loadingData = true;
+                    let country;
+                    for (const comp of locationData.address_components) {
+                        for (const type of comp.types) {
+                            if (type === 'country') {
+                                country = comp.long_name;
+                                break;
+                            }
+                        }
+                    }
+                    if (country) {
+                        // Load posts becauseee
+                        const ref = database.ref('location/country/' + country + '/posts');
+                        ref.on('child_added', (snapshot) => {
+                            database.ref('overview/' + snapshot.key).on('value', (post) => {
+                                const index = this.getIndexOf(post);
+                                if (index >= 0) {
+                                    // Update post if exists
+                                    this.set('posts.' + index, {
+                                        key: post.key,
+                                        val: post.val(),
+                                    });
+                                } else {
+                                    this.push('posts', {
+                                        key: post.key,
+                                        val: post.val(),
+                                    });
+                                }
+                                if (this.loadingData) this.loadingData = false;
+                            });
+                        });
+                    }
+                }
+            }
+
+            getIndexOf(snapshot) {
+                for (let i = 0; i < this.posts.length; i++) {
+                    if (this.posts[i].key === snapshot.key) {
+                        console.log('exists');
+                        return i;
+                    }
+                }
+                return -1;
             }
 
             handleTap(e) {
@@ -66,16 +211,6 @@
                     composed: true,
                     detail: {route: '/post/' + key},
                 }));
-            }
-
-            ready() {
-                super.ready();
-                database.ref('overview').on('child_added', (snapshot) => {
-                    this.push('posts', {
-                        key: snapshot.key,
-                        val: snapshot.val(),
-                    });
-                });
             }
         }
 
