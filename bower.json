@@ -34,7 +34,8 @@
     "paper-styles": "polymerelements/paper-styles#^2.0.0",
     "iron-validatable-behavior": "polymerelements/iron-validatable-behavior#^2.0.0",
     "iron-flex-layout": "polymerelements/iron-flex-layout#^2.0.0",
-    "iron-a11keys-behavior": "polymerelements/iron-a11y-keys-behavior#^2.0.0"
+    "iron-a11keys-behavior": "polymerelements/iron-a11y-keys-behavior#^2.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0",
