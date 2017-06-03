@@ -235,7 +235,9 @@
 
             _changePage(e) {
                 console.log('requested new page');
-                this.set('route.path', e.detail.route);
+                // this.set('route.path', e.detail.route);
+                window.history.pushState({}, null, e.detail.route);
+                window.dispatchEvent(new CustomEvent('location-changed'));
             }
 
             _routePageChanged(page) {
