@@ -132,8 +132,7 @@
                 </template>
                 <template is="dom-if" if="{{!hasPosts}}">
                     <div class="no-posts">
-                        <img class="image no-posts-icon" src="../../images/svg/description_black.svg" width="200px"
-                             height="200px"/>
+                        <object class="image no-posts-icon" data="../../images/svg/description_black.svg" type="image/svg+xml" width="200" height="200"></object>
                         <h1>No posts near you!</h1>
                     </div>
                 </template>
@@ -213,7 +212,7 @@
                     }
                     if (country) {
                         // Load posts becauseee
-                        const ref = database.ref('location/country/' + country + '/posts');
+                        const ref = database.ref('location/reg/' + country + '/posts');
                         ref.once('value', (snapshot) => {
                             // Check if has posts
                             if (!snapshot.val()) {
