@@ -212,7 +212,7 @@
                     }
                     if (country) {
                         // Load posts becauseee
-                        const ref = database.ref('location/reg/' + country + '/posts');
+                        const ref = database.ref('location/country/' + country + '/posts');
                         ref.once('value', (snapshot) => {
                             // Check if has posts
                             if (!snapshot.val()) {
