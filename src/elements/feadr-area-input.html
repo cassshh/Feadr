@@ -10,6 +10,7 @@
             paper-dropdown-menu, paper-listbox {
                 width: 250px;
             }
+
             paper-dropdown-menu {
                 height: 200px;
                 margin: auto;
@@ -17,22 +18,25 @@
             }
 
         </style>
-            <div>{{location}}</div>
-            <div>{{areaselect}}</div>
-            <paper-dropdown-menu label="Area selector">
-                <paper-listbox slot="dropdown-content" selected="{{selectedArea}}">
-                    <paper-item>Route</paper-item>
-                    <paper-item>City</paper-item>
-                    <paper-item>Locality</paper-item>
-                    <paper-item>Province</paper-item>
-                    <paper-item>Country</paper-item>
-                    <paper-item>Postal</paper-item>
-                </paper-listbox>
-            </paper-dropdown-menu>
+        <div>{{location}}</div>
+        <div>{{areaselect}}</div>
+        <paper-dropdown-menu label="Area selector">
+            <paper-listbox slot="dropdown-content" selected="{{selectedArea}}">
+                <paper-item>Route</paper-item>
+                <paper-item>City</paper-item>
+                <paper-item>Locality</paper-item>
+                <paper-item>Province</paper-item>
+                <paper-item>Country</paper-item>
+                <paper-item>Postal</paper-item>
+            </paper-listbox>
+        </paper-dropdown-menu>
     </template>
     <script>
         class FeadrAreaInput extends Polymer.Element {
-            static get is() {return 'feadr-area-input';}
+            static get is() {
+                return 'feadr-area-input';
+            }
+
             static get properties() {
                 return {
                     selectedArea: {
@@ -54,36 +58,39 @@
                     },
                 };
             }
+
             ready() {
-                    super.ready();
-                    // alert('hello');
+                super.ready();
+                // alert('hello');
             }
 
             _getGeoLocation(newIndex) {
                 let self = this;
-                new Promise(function(resolve, reject) {
+                new Promise((resolve, reject) => {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(resolve);
                     }
                     else {
                         reject('Something went wrong');
                     }
-                }).then(function(result) {
-                    fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+result.coords.latitude+','+ result.coords.longitude+'&key=AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg')
-                        .then(function(fetchedData) {
-                            if(fetchedData.status !== 200) {
+                }).then((result) => {
+                    fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='
+                        + result.coords.latitude + ','
+                        + result.coords.longitude + '&key=AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg')
+                        .then((fetchedData) => {
+                            if (fetchedData.status !== 200) {
                                 console.log('something went wrong');
                             }
-                                return fetchedData.json();
-                        }).then(function(data) {
-                            self.setProperties({
-                                // eslint-disable-next-line
-                                location: data.results[0].address_components[newIndex+1].long_name,
-                                // eslint-disable-next-line
-                                areaselect: data.results[0].address_components[newIndex+1].types[0],
-                            });
+                            return fetchedData.json();
+                        }).then((data) => {
+                        self.setProperties({
+                            // eslint-disable-next-line
+                            location: data.results[0].address_components[newIndex + 1].long_name,
+                            // eslint-disable-next-line
+                            areaselect: data.results[0].address_components[newIndex + 1].types[0],
+                        });
                     });
-                }, function(err) {
+                }, (err) => {
                     console.log(err);
                 });
             }
