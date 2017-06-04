@@ -95,7 +95,7 @@
                 const app = document.querySelector('feadr-app');
                 if (app.user) {
                     // User is logged in :)
-                    var newPostRef = database.ref('queue/posts').push();
+                    var newPostRef = database.ref('queue/posts/create').push();
                     var title = this.title;
                     var location = this.place;
                     var text = this.text;
