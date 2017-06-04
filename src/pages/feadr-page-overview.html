@@ -180,6 +180,7 @@
             }
 
             postsAddedOrRemoved(e) {
+                console.log(e);
                 this.hasPosts = this.posts.length > 0;
             }
 
@@ -237,6 +238,11 @@
                                     });
                                 }
                                 if (this.loadingData) this.loadingData = false;
+                                database.ref('points/posts/' + snapshot.key).on('value', (points) => {
+                                    console.log(points.val());
+                                    this.set('posts.' + this.getIndexOf(post) + '.val.points',
+                                        points.val().upvotes - points.val().downvotes);
+                                });
                             });
                         });
                     }

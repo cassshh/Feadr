@@ -236,7 +236,7 @@
             _changePage(e) {
                 console.log('requested new page');
                 // this.set('route.path', e.detail.route);
-                if(e.detail.replace) {
+                if (e.detail.replace) {
                     window.history.replaceState({}, null, e.detail.route);
                 } else {
                     window.history.pushState({}, null, e.detail.route);
