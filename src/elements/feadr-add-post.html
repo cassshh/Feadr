@@ -46,7 +46,7 @@
 
                 <feadr-location-input place="{{place}}"></feadr-location-input>
 
-                <paper-chip-input label="+Add tags" items='[]' closable></paper-chip-input><br>
+                <paper-chip-input label="+Add tags" items='{{tags}}' closable></paper-chip-input><br>
 
                 <div id="sectionsContainer">
                     <div id="sections">
@@ -86,6 +86,11 @@
                     images: {
                         type: Object,
                         notify: true,
+                    },
+                    tags: {
+                        type: Array,
+                        notify: true,
+                        value: [],
                     },
                 };
             }
