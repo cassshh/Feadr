@@ -9,6 +9,8 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 
 <!-- Other Imports -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
@@ -53,6 +55,30 @@
                 margin: 0 auto;
             }
 
+            paper-listbox {
+                display: block;
+            }
+
+            paper-menu-button {
+                padding: 0;
+                --paper-menu-button-dropdown-background: #F5F5F5;
+            }
+
+            paper-item {
+                width: 100px;
+                display: block;
+                padding: 4px 8px 4px 8px;
+                text-align: center;
+                cursor: pointer;
+                color: black;
+            }
+
+            paper-item:hover,
+            paper-item:active,
+            paper-item:focus {
+                background-color: #AEAEAE;
+            }
+
         </style>
         <app-header-layout>
             <app-header slot="header" condenses fixed effects="waterfall">
@@ -65,7 +91,12 @@
                         <paper-icon-button icon="arrow-upward" on-click="_upvotePost"></paper-icon-button>
                         <paper-icon-button icon="arrow-downward"></paper-icon-button>
                         <paper-icon-button icon="favorite"></paper-icon-button>
-                        <paper-icon-button icon="more-vert"></paper-icon-button>
+                        <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
+                            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                            <paper-listbox slot="dropdown-content">
+                                <paper-item on-tap="delete">Delete</paper-item>
+                            </paper-listbox>
+                        </paper-menu-button>
                     </div>
                 </app-toolbar>
             </app-header>
@@ -131,7 +162,7 @@
                     this.dispatchEvent(new CustomEvent('requestChangePage', {
                         bubbles: true,
                         composed: true,
-                        detail: {route: '/404'},
+                        detail: {route: '/404', replace: true},
                     }));
                 }
             }
@@ -151,7 +182,7 @@
                         this.post = snapshot.val();
                         var pointsPost = database.ref('points/posts/' + this.postid);
                         const that = this;
-                        pointsPost.once('value', function(snapshot) {
+                        pointsPost.once('value', (snapshot) => {
                             that.upvotes = snapshot.val().upvotes;
                         });
                         const d1 = new Date();
@@ -173,7 +204,7 @@
                         this.dispatchEvent(new CustomEvent('requestChangePage', {
                             bubbles: true,
                             composed: true,
-                            detail: {route: '/404'},
+                            detail: {route: '/404', replace: true},
                         }));
                     }
                 });
@@ -182,7 +213,7 @@
             _upvotePost() {
                 var pointsPost = database.ref('points/posts/' + this.postid);
                 var that = this;
-                pointsPost.once('value', function(snapshot) {
+                pointsPost.once('value', (snapshot) => {
                     var upvotesCount = snapshot.val().upvotes;
                     if (upvotesCount) {
                         that.upvotes = upvotesCount + 1;
@@ -201,14 +232,25 @@
             getComments() {
                 database.ref('post_comments/' + this.postid)
                     .on('value', (snapshot) => {
-                    this.key = [];
-                    if (snapshot.val() !== null) {
-                        snapshot.forEach((childSnapshot) => {
-                            this.push('key', childSnapshot.key);
-                            this.totalComments = this.key.length;
-                        });
+                        this.key = [];
+                        if (snapshot.val() !== null) {
+                            snapshot.forEach((childSnapshot) => {
+                                this.push('key', childSnapshot.key);
+                                this.totalComments = this.key.length;
+                            });
+                        }
+                    });
+            }
+
+            delete() {
+                const app = document.querySelector('feadr-app');
+                if (app.user) {
+                    if (this.postid) {
+                        database.ref('queue/posts/remove').push({post_uid: this.postid});
                     }
-                });
+                } else {
+                    console.log('Not signed in');
+                }
             }
         }
         window.customElements.define(FeadrPost.is, FeadrPost);

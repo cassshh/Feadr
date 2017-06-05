@@ -187,8 +187,8 @@
                 if (val) {
                     const d1 = new Date();
                     const d2 = new Date(this.time);
-                    if (d1.getYear() - d2.getYear()) {
-                        const i = d1.getYear() - d2.getYear();
+                    if (d1.getFullYear() - d2.getFullYear()) {
+                        const i = d1.getFullYear() - d2.getFullYear();
                         if (i > 1) {
                             this.formatTime = i + ' years ago';
                         } else {

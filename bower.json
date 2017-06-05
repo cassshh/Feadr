@@ -30,7 +30,7 @@
     "paper-dropdown-menu": "polymerelements/paper-dropdown-menu#2.0.0",
     "iron-form-element-behavior": "polymerelements/iron-form-element-behavior#^2.0.0",
     "paper-behaviors": "polymerelements/paper-behaviors#^2.0.0",
-    "paper-menu-button": "polymerelements/paper-menu-button#^2.0.0",
+    "paper-menu-button": "PolymerElements/paper-menu-button#^2.0.0",
     "paper-styles": "polymerelements/paper-styles#^2.0.0",
     "iron-validatable-behavior": "polymerelements/iron-validatable-behavior#^2.0.0",
     "iron-flex-layout": "polymerelements/iron-flex-layout#^2.0.0",
