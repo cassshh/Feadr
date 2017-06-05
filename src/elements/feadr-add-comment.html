@@ -87,19 +87,21 @@
             }
 
             _postComment() {
-                var that = this;
-
-
+                var text = this.$.textarea.value;
                 const app = document.querySelector('feadr-app');
                 if (app.user) {
                     if (this.$.textarea.value) {
-                        // eslint-disable-next-line
-                        firebase.database().ref('comments/posts/' + this.postid).push().set({
-                            text: this.$.textarea.value,
-                            user: app.user.displayName,
-                            upVotes: 0,
-                        });
-                        that.$.textarea.value = null;
+                        let data;
+                        data = {
+                            post_uid: this.postid,
+                            text: text,
+                            time: firebase.database.ServerValue.TIMESTAMP,
+                            user_uid: app.user.uid,
+                            username: app.user.displayName,
+                        };
+
+                        database.ref('/queue/comments/create').push(data);
+                        this.$.textarea.value = null;
                     }
                 }
             }

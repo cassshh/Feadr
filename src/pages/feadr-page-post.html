@@ -149,7 +149,11 @@
                 database.ref('posts/' + this.postid).once('value', (snapshot) => {
                     if (snapshot.val() !== null) {
                         this.post = snapshot.val();
-                        this.upvotes = snapshot.val().points;
+                        var pointsPost = database.ref('points/posts/' + this.postid);
+                        const that = this;
+                        pointsPost.once('value', function(snapshot) {
+                            that.upvotes = snapshot.val().upvotes;
+                        });
                         const d1 = new Date();
                         const d2 = new Date(this.post.time);
                         const diff = d1 - d2;
@@ -176,33 +180,26 @@
             }
 
             _upvotePost() {
-                var points = database.ref('overview/' + this.postid);
-                var pointsPost = database.ref('posts/' + this.postid);
+                var pointsPost = database.ref('points/posts/' + this.postid);
                 var that = this;
-                points.once('value', function(snapshot) {
-                    var pointsCount = snapshot.val().points;
-                    that.upvotes = pointsCount + 1;
-                    if (pointsCount) {
-                        points.update({
-                            'points': pointsCount + 1,
-                        });
+                pointsPost.once('value', function(snapshot) {
+                    var upvotesCount = snapshot.val().upvotes;
+                    if (upvotesCount) {
+                        that.upvotes = upvotesCount + 1;
                         pointsPost.update({
-                            'points': pointsCount + 1,
+                            'upvotes': upvotesCount + 1,
                         });
                     } else {
                         that.upvotes = 1;
-                        points.update({
-                            'points': 1,
-                        });
                         pointsPost.update({
-                            'points': 1,
+                            'upvotes': 1,
                         });
                     }
                 });
             }
 
             getComments() {
-                database.ref('comments/posts/' + this.postid)
+                database.ref('post_comments/' + this.postid)
                     .on('value', (snapshot) => {
                     this.key = [];
                     if (snapshot.val() !== null) {
