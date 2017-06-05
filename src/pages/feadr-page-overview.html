@@ -237,9 +237,9 @@
                                     });
                                 }
                                 if (this.loadingData) this.loadingData = false;
-                                database.ref('points/posts/' + snapshot.key).on('value', (points) => {
+                                database.ref('voting/posts/' + snapshot.key).on('value', (votes) => {
                                     this.set('posts.' + this.getIndexOf(post) + '.val.points',
-                                        points.val().upvotes - points.val().downvotes);
+                                        votes.val().upvotes - votes.val().downvotes);
                                 });
                             });
                         });
