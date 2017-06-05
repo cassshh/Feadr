@@ -123,7 +123,7 @@
             <div class="user-time-container">
                 <span class="username">[[username]]</span>
                 <img class="clock-icon" src="../../images/svg/time_black.svg"/>
-                <span class="time">[[time]]</span>
+                <span class="time">[[formatTime]]</span>
             </div>
         </div>
         <template is="dom-if" if="[[!thumbnail]]">
@@ -165,17 +165,67 @@
                     },
                     time: {
                         type: String,
+                        value: null,
+                        observer: '_changedTime',
+                    },
+                    formatTime: {
+                        type: String,
                         value: 'now',
                     },
                     points: {
                         type: Number,
-                        value: 1337,
+                        value: 0,
                     },
                     thumbnail: {
                         type: String,
                         value: null,
                     },
                 };
+            }
+
+            _changedTime(val) {
+                if (val) {
+                    const d1 = new Date();
+                    const d2 = new Date(this.time);
+                    console.log('post: ' + d2.getHours());
+                    console.log(d1.getHours() - d2.getHours());
+                    if (d1.getYear() - d2.getYear()) {
+                        const i = d1.getYear() - d2.getYear();
+                        if (i > 1) {
+                            this.formatTime = i + ' years ago';
+                        } else {
+                            this.formatTime = i + ' year ago';
+                        }
+                    } else if (d1.getMonth() - d2.getMonth()) {
+                        const i = d1.getMonth() - d2.getMonth();
+                        if (i > 1) {
+                            this.formatTime = i + ' months ago';
+                        } else {
+                            this.formatTime = i + ' month ago';
+                        }
+                    } else if (d1.getDate() - d2.getDate()) {
+                        const i = d1.getDate() - d2.getDate();
+                        if (i > 1) {
+                            this.formatTime = i + ' days ago';
+                        } else {
+                            this.formatTime = i + ' day ago';
+                        }
+                    } else if (d1.getHours() - d2.getHours()) {
+                        const i = d1.getHours() - d2.getHours();
+                        if (i > 1) {
+                            this.formatTime = i + ' hours ago';
+                        } else {
+                            this.formatTime = i + ' hour ago';
+                        }
+                    } else if (d1.getMinutes() - d2.getMinutes()) {
+                        const i = d1.getMinutes() - d2.getMinutes();
+                        if (i > 1) {
+                            this.formatTime = i + ' minutes ago';
+                        } else {
+                            this.formatTime = i + ' minute ago';
+                        }
+                    }
+                }
             }
         }
 
