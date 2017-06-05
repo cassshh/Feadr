@@ -219,7 +219,7 @@
                 var that = this;
                 var commentDataRef = firebase.database()
                     .ref('post_comments/' + this.postid + '/' + that.key);
-                commentDataRef.on('value', function (snapshot) {
+                commentDataRef.on('value', function(snapshot) {
                     if (snapshot.val() !== null) {
                         that.commentText = snapshot.val().text;
                         that.userName = snapshot.val().user;
@@ -232,7 +232,7 @@
                 this._stopPropagation();
                 var upVotes = database
                     .ref('post_comments/' + this.postid + '/' + this.key);
-                upVotes.once('value', function (snapshot) {
+                upVotes.once('value', function(snapshot) {
                     var upVotesCount = snapshot.val().upVotes;
                     if (upVotesCount) {
                         upVotes.update({
