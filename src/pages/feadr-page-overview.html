@@ -237,7 +237,7 @@
                                     });
                                 }
                                 if (this.loadingData) this.loadingData = false;
-                                database.ref('voting/posts/' + snapshot.key).on('value', (votes) => {
+                                database.ref('votes/posts/' + snapshot.key).on('value', (votes) => {
                                     this.set('posts.' + this.getIndexOf(post) + '.val.points',
                                         votes.val().upvotes - votes.val().downvotes);
                                 });
