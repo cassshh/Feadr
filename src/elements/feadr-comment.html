@@ -136,7 +136,7 @@
                                            icon="arrow-upward"></paper-icon-button>
                     </div>
                     <div class="downvoteButton">
-                        <paper-icon-button on-click="_stopPropagation" class="paperBtn"
+                        <paper-icon-button on-click="_downvoteComment" class="paperBtn"
                                            icon="arrow-downward"></paper-icon-button>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                 <div class="centerActions">
                     <div class="votes">
                         <iron-icon icon="arrow-upward"></iron-icon>
-                        [[upVotes]]
+                        [[votes]]
                     </div>
                     <div class="expand">
                         <iron-icon id="expandIcon" icon="unfold-more"></iron-icon>
@@ -192,13 +192,13 @@
                     },
                     user_uid: {
                         type: String,
-                        value: 'UserName',
+                        value: 'User_uid',
                     },
                     postTime: {
                         type: String,
                         value: '1d ago',
                     },
-                    upVotes: {
+                    votes: {
                         type: Number,
                     },
                     comment: {
@@ -227,7 +227,10 @@
                     if (snapshot.val() !== null) {
                         that.commentText = snapshot.val().text;
                         that.userName = snapshot.val().user;
-                        that.upVotes = snapshot.val().upVotes;
+                                                var pointsComment = database.ref('votes/comments/' + that.key);
+                        pointsComment.once('value', (snapshot) => {
+                            that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
+                        });
                         that.user_uid = snapshot.val().user_uid;
                     }
                 });
@@ -235,20 +238,22 @@
 
             _upvoteComment() {
                 this._stopPropagation();
-                var upVotes = database
-                    .ref('post_comments/' + this.postid + '/' + this.key);
-                upVotes.once('value', function(snapshot) {
-                    var upVotesCount = snapshot.val().upVotes;
-                    if (upVotesCount) {
-                        upVotes.update({
-                            'upVotes': upVotesCount + 1,
-                        });
-                    } else {
-                        upVotes.update({
-                            'upVotes': 1,
-                        });
-                    }
-                });
+                const app = document.querySelector('feadr-app');
+                const data = {
+                    type_uid: this.key, // uid of the type
+                    user_uid: app.user.uid,
+                };
+                database.ref('queue/votes/comment/upvote').push(data);
+            }
+
+            _downvoteComment() {
+                this._stopPropagation();
+                const app = document.querySelector('feadr-app');
+                const data = {
+                    type_uid: this.key, // uid of the type
+                    user_uid: app.user.uid,
+                };
+                database.ref('queue/votes/comment/downvote').push(data);
             }
 
             _commentSelected() {
