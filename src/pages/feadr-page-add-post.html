@@ -149,6 +149,12 @@
                             newPostRef.set(obj);
                         });
                     }
+
+                    this.dispatchEvent(new CustomEvent('requestChangePage', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {route: '/'},
+                    }));
                 }
             }
         }

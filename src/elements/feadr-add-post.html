@@ -21,6 +21,7 @@
             paper-chip-input {
                 --paper-chip-background-color: #816fa2;
                 --paper-chip-label-color: #fff;
+                --paper-input-container-focus-color: #544475;
             }
             #sectionsContainer {
                 position: relative;
@@ -36,6 +37,9 @@
                 --paper-fab-background: #544475;
                 --paper-fab-keyboard-focus-background: #544475;
             }
+            paper-input {
+                --paper-input-container-focus-color: #544475;
+            }
             #addBtn {
                 height: 70px;
             }
@@ -44,13 +48,13 @@
             <form id="myForm" method="get">
                 <paper-input id="title" label="Title" name="title" value="{{title::input}}" char-counter maxlength="140"></paper-input><br>
 
-                <feadr-location-input place="{{place}}"></feadr-location-input>
+                <feadr-location-input place="{{place}}" location-name="[[locationName]]"></feadr-location-input>
 
                 <paper-chip-input label="+Add tags" items='{{tags}}' closable></paper-chip-input><br>
 
                 <div id="sectionsContainer">
                     <div id="sections">
-                        <feadr-add-post-section text="{{text}}" images="{{images}}"></feadr-add-post-section>
+                        <feadr-add-post-section text="{{text}}" images="{{images}}" edited-images="{{editedImages}}"></feadr-add-post-section>
                     </div>
                     <div id="addBtn">
                         <paper-fab icon="add" on-click="_addSection"></paper-fab>
@@ -87,10 +91,18 @@
                         type: Object,
                         notify: true,
                     },
+                    editedImages: {
+                        type: Object,
+                        notify: true,
+                    },
                     tags: {
                         type: Array,
                         notify: true,
                         value: [],
+                    },
+                    locationName: {
+                        type: String,
+                        notify: true,
                     },
                 };
             }

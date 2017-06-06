@@ -262,12 +262,10 @@
                     var deleteButton = this.$.deleteButton;
                     if(app.user.uid === this.post.user_uid) {
                         // user created this post
-                        console.log(edit);
                         edit.setAttribute('style', 'display: visible');
                         deleteButton.setAttribute('style', 'display: visible');
                     } else {
                         // user is not the creator of this post
-                        console.log(edit);
                         edit.setAttribute('style', 'display: none');
                         deleteButton.setAttribute('style', 'display: none');
                     }
