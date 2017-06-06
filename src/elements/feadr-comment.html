@@ -190,6 +190,10 @@
                         type: String,
                         value: 'UserName',
                     },
+                    user_uid: {
+                        type: String,
+                        value: 'UserName',
+                    },
                     postTime: {
                         type: String,
                         value: '1d ago',
@@ -224,6 +228,7 @@
                         that.commentText = snapshot.val().text;
                         that.userName = snapshot.val().user;
                         that.upVotes = snapshot.val().upVotes;
+                        that.user_uid = snapshot.val().user_uid;
                     }
                 });
             }
@@ -265,14 +270,18 @@
 
             _deleteComment() {
                 this._stopPropagation();
-                const postid = this.postid;
-                const key = this.key;
-                let data;
-                data = {
-                    post_uid: postid,
-                    comment_uid: key,
-                };
-                database.ref('/queue/comments/remove').push(data);
+                const app = document.querySelector('feadr-app');
+                debugger;
+                if (app.user.uid == this.user_uid) {
+                    const postid = this.postid;
+                    const key = this.key;
+                    let data;
+                    data = {
+                        post_uid: postid,
+                        comment_uid: key,
+                    };
+                    database.ref('/queue/comments/remove').push(data);
+                }
             }
 
             _stopPropagation() {
