@@ -92,7 +92,8 @@
                         <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
                             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                             <paper-listbox slot="dropdown-content">
-                                <paper-item on-tap="delete">Delete</paper-item>
+                                <paper-item id="edit" on-tap="edit" style="display: none;">Edit</paper-item>
+                                <paper-item id="deleteButton" on-tap="delete" style="display: none;">Delete</paper-item>
                             </paper-listbox>
                         </paper-menu-button>
                     </div>
@@ -139,6 +140,7 @@
                     post: {
                         type: Object,
                         value: null,
+                        observer: '_postChanged',
                     },
                     key: {
                         type: Array,
@@ -249,6 +251,34 @@
                 } else {
                     console.log('Not signed in');
                 }
+            }
+
+            _postChanged() {
+                const app = document.querySelector('feadr-app');
+                if(app.user && this.post !== null ) {
+                    // user logged in
+                    var edit = this.$.edit;
+                    var deleteButton = this.$.deleteButton;
+                    if(app.user.uid === this.post.user_uid) {
+                        // user created this post
+                        console.log(edit);
+                        edit.setAttribute('style', 'display: visible');
+                        deleteButton.setAttribute('style', 'display: visible');
+                    } else {
+                        // user is not the creator of this post
+                        console.log(edit);
+                        edit.setAttribute('style', 'display: none');
+                        deleteButton.setAttribute('style', 'display: none');
+                    }
+                }
+            }
+
+            edit() {
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {route: '/edit-post/' + this.postid},
+                }));
             }
         }
         window.customElements.define(FeadrPost.is, FeadrPost);

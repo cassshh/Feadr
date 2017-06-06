@@ -7,6 +7,7 @@
     "src/pages/feadr-page-add-post.html",
     "src/pages/feadr-page-post.html",
     "src/pages/feadr-page-discover.html",
+    "src/pages/feadr-page-edit-post.html",
     "src/pages/feadr-page-login.html"
   ],
   "sources": [
