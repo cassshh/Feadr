@@ -311,8 +311,7 @@
                 }));
             }
 
-            setNavigation(e) {
-                console.log(e);
+            updateBottomNav(e) {
                 let i;
                 switch (e) {
                     case 'overview':
@@ -360,9 +359,7 @@
 
             _pageChanged(page, oldPage) {
                 console.log('_pageChanged: ' + page + ' | ' + oldPage);
-                if (oldPage === undefined) {
-                    this.setNavigation(page);
-                }
+                this.updateBottomNav(page);
                 // Load page import on demand. Show 404 page if fails
                 const link = '../pages/feadr-page-' + page + '.html';
                 const resolvedPageUrl = this.resolveUrl(link);
