@@ -21,10 +21,14 @@
             }
 
             iron-pages {
-                height: 100%;
+                @apply(--layout-flex);
             }
 
             paper-tabs {
+                position: fixed;
+                height: 48px;
+                bottom: 0;
+                width: 100%;
                 background-color: #FFF;
                 --paper-tabs-selection-bar-color: #313131;
                 --paper-tabs-container: {
