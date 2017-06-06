@@ -46,6 +46,18 @@
                 text-decoration: none;
             }
 
+            .selected {
+                display: none;
+            }
+
+            .iron-selected .selected {
+                display: block;
+            }
+
+            .iron-selected .unselected {
+                display: none;
+            }
+
         </style>
         <google-maps-api api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg"
                          version="3.exp"
@@ -78,31 +90,26 @@
                 <feadr-page-login name="login"></feadr-page-login>
                 <feadr-page-404 name="fallback"></feadr-page-404>
             </iron-pages>
-            <paper-tabs selected="0" align-bottom>
-                <paper-tab link>
-                    <a href="/">
-                        <iron-icon src="../../images/svg/nav_home.svg"></iron-icon>
-                    </a>
+            <paper-tabs id="tabs" selected="{{nav}}" align-bottom>
+                <paper-tab name="" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_home_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_home.svg"></iron-icon>
                 </paper-tab>
-                <paper-tab link>
-                    <a href="/discover">
-                        <iron-icon src="../../images/svg/nav_discover_stroke.svg"></iron-icon>
-                    </a>
+                <paper-tab name="discover" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_discover_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_discover.svg"></iron-icon>
                 </paper-tab>
-                <paper-tab link>
-                    <a href="/add-post">
-                        <iron-icon src="../../images/svg/nav_plus.svg"></iron-icon>
-                    </a>
+                <paper-tab name="add-post" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_plus.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_plus.svg"></iron-icon>
                 </paper-tab>
-                <paper-tab link>
-                    <a href="/notifications">
-                        <iron-icon src="../../images/svg/nav_notification_stroke.svg"></iron-icon>
-                    </a>
+                <paper-tab name="notifications" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_notification_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_notification.svg"></iron-icon>
                 </paper-tab>
-                <paper-tab link>
-                    <a href="/profile">
-                        <iron-icon src="../../images/svg/nav_profile_stroke.svg"></iron-icon>
-                    </a>
+                <paper-tab name="profile" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_profile_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_profile.svg"></iron-icon>
                 </paper-tab>
             </paper-tabs>
         </app-header-layout>
@@ -152,6 +159,10 @@
                         observer: '_subpageChanged',
                     },
                     rootPattern: String,
+                    nav: {
+                        type: Number,
+                        value: 0,
+                    },
                 };
             }
 
@@ -288,6 +299,43 @@
                 });
             }
 
+            navigate(e) {
+                let name = e.target.getAttribute('name');
+                if (name === null) {
+                    // Pressed icon, so get parents value.
+                    name = e.target.parentElement.getAttribute('name');
+                }
+                // Replace so one back-press quits app. Instead of overflowing the history
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    detail: {route: '/' + name, replace: true},
+                }));
+            }
+
+            setNavigation(e) {
+                console.log(e);
+                let i;
+                switch (e) {
+                    case 'overview':
+                        i = 0;
+                        break;
+                    case 'discover':
+                        i = 1;
+                        break;
+                    case 'add-post':
+                        i = 2;
+                        break;
+                    case 'notifications':
+                        i = 3;
+                        break;
+                    case 'profile':
+                        i = 4;
+                        break;
+                    default:
+                        i = -1;
+                }
+                this.nav = i;
+            }
+
             _changePage(e) {
                 console.log('requested new page');
                 // this.set('route.path', e.detail.route);
@@ -312,6 +360,9 @@
 
             _pageChanged(page, oldPage) {
                 console.log('_pageChanged: ' + page + ' | ' + oldPage);
+                if(oldPage === undefined) {
+                    this.setNavigation(page);
+                }
                 // Load page import on demand. Show 404 page if fails
                 const link = '../pages/feadr-page-' + page + '.html';
                 const resolvedPageUrl = this.resolveUrl(link);
