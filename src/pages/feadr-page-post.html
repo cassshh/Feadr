@@ -112,7 +112,8 @@
                     </feadr-post-details>
                     <!-- TODO repeat for amount of sections-->
                     <feadr-post-section
-                            images="[[images]]">
+                            images="[[images]]"
+                            text="[[text]]">
                     </feadr-post-section>
                     <feadr-post-footer total-comments="[[totalComments]]" votes="[[votes]]"></feadr-post-footer>
                 </div>
@@ -160,6 +161,9 @@
                         type: Array,
                         value: [],
                     },
+                    text: {
+                        type: String,
+                    },
                     listener: Object,
                 };
             }
@@ -194,6 +198,8 @@
                             that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
                         });
                         this.images = this.post.content.section1.images;
+                        this.text = this.post.content.section1.text;
+                        console.log(this.post);
                         const d1 = new Date();
                         const d2 = new Date(this.post.time);
                         const diff = d1 - d2;

@@ -52,8 +52,9 @@
                 </l2t-paper-slider>
             </template>
 
-            <!-- Text is mandatory, so always show -->
-            <div class="text">[[text]]</div>
+            <template is="dom-if" if="[[text]]">
+                <div class="text">[[text]]</div>
+            </template>
         </div>
 
 
