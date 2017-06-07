@@ -111,7 +111,9 @@
                             username="[[post.username]]">
                     </feadr-post-details>
                     <!-- TODO repeat for amount of sections-->
-                    <feadr-post-section></feadr-post-section>
+                    <feadr-post-section
+                            images="[[images]]">
+                    </feadr-post-section>
                     <feadr-post-footer total-comments="[[totalComments]]" votes="[[votes]]"></feadr-post-footer>
                 </div>
                 <div class="postComment">
@@ -154,6 +156,10 @@
                     votes: {
                         type: Number,
                     },
+                    images: {
+                        type: Array,
+                        value: [],
+                    },
                     listener: Object,
                 };
             }
@@ -187,6 +193,7 @@
                         pointsPost.once('value', (snapshot) => {
                             that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
                         });
+                        this.images = this.post.content.section1.images;
                         const d1 = new Date();
                         const d2 = new Date(this.post.time);
                         const diff = d1 - d2;
