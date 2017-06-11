@@ -194,7 +194,8 @@
                     },
                     user_uid: {
                         type: String,
-                        value: 'User_uid',
+                        value: null,
+                        observer: '_isOP',
                     },
                     postTime: {
                         type: String,
@@ -213,10 +214,6 @@
                     OP: {
                         type: Boolean,
                         value: false,
-                    },
-                    isOP: {
-                        type: Boolean,
-                        computed: 'isOP(isOP, OP)',
                     },
                     commentSelected: {
                         type: Boolean,
@@ -283,24 +280,16 @@
                 }
             }
 
-
-
-            isOP(isOP, OP) {
+            _isOP(OP) {
                 const app = document.querySelector('feadr-app');
-                const that = this;
-                const commentDataRef = database
-                    .ref('post_comments/' + this.postid + '/' + that.key);
-                commentDataRef.on('value', function(snapshot) {
-                    if (snapshot.val() !== null) {
-                        that.user_uid = snapshot.val().user_uid;
+                if (this.user_uid) {
+                    if (app.user.uid === this.user_uid) {
+                        this.OP = true;
+                        return OP;
+                    } else {
+                        this.OP = false;
+                        return OP;
                     }
-                });
-                if (app.user.uid === this.user_uid) {
-                    this.OP = true;
-                    return isOP || OP;
-                } else {
-                    this.OP = false;
-                    return isOP || OP;
                 }
             }
 
