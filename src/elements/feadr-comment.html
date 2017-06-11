@@ -162,9 +162,11 @@
                         <iron-icon icon="editor:mode-comment"></iron-icon>
                         5
                     </div>
-                    <div class="subComments">
-                        <iron-icon icon="delete" on-click="_deleteComment"></iron-icon>
-                    </div>
+                    <template is="dom-if" if="{{OP}}">
+                        <div class="subComments">
+                            <iron-icon icon="delete" on-click="_deleteComment"></iron-icon>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -208,6 +210,14 @@
                         type: String,
                         observer: '_keyChanged',
                     },
+                    OP: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    isOP: {
+                        type: Boolean,
+                        computed: 'isOP(isOP, OP)',
+                    },
                     commentSelected: {
                         type: Boolean,
                         value: false,
@@ -221,7 +231,7 @@
 
             _getData() {
                 var that = this;
-                var commentDataRef = firebase.database()
+                var commentDataRef = database
                     .ref('post_comments/' + this.postid + '/' + that.key);
                 commentDataRef.on('value', function(snapshot) {
                     if (snapshot.val() !== null) {
@@ -273,10 +283,31 @@
                 }
             }
 
+
+
+            isOP(isOP, OP) {
+                const app = document.querySelector('feadr-app');
+                const that = this;
+                const commentDataRef = database
+                    .ref('post_comments/' + this.postid + '/' + that.key);
+                commentDataRef.on('value', function(snapshot) {
+                    if (snapshot.val() !== null) {
+                        that.user_uid = snapshot.val().user_uid;
+                    }
+                });
+                if (app.user.uid === this.user_uid) {
+                    this.OP = true;
+                    return isOP || OP;
+                } else {
+                    this.OP = false;
+                    return isOP || OP;
+                }
+            }
+
             _deleteComment() {
                 this._stopPropagation();
                 const app = document.querySelector('feadr-app');
-                if (app.user.uid == this.user_uid) {
+                if (app.user.uid === this.user_uid) {
                     const postid = this.postid;
                     const key = this.key;
                     let data;
