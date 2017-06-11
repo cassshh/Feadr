@@ -110,11 +110,12 @@
                             time="[[post.time]]"
                             username="[[post.username]]">
                     </feadr-post-details>
-                    <!-- TODO repeat for amount of sections-->
-                    <feadr-post-section
-                            images="[[images]]"
-                            text="[[text]]">
-                    </feadr-post-section>
+                    <template is="dom-repeat" items="[[sections]]">
+                        <feadr-post-section
+                                images="[[item.images]]"
+                                text="[[item.text]]">
+                        </feadr-post-section>
+                    </template>
                     <feadr-post-footer total-comments="[[totalComments]]" votes="[[votes]]"></feadr-post-footer>
                 </div>
                 <div class="postComment">
@@ -164,6 +165,10 @@
                     text: {
                         type: String,
                     },
+                    sections: {
+                        type: Array,
+                        value: [],
+                    },
                     listener: Object,
                 };
             }
@@ -199,7 +204,12 @@
                         });
                         this.images = this.post.content.section1.images;
                         this.text = this.post.content.section1.text;
-                        console.log(this.post);
+                        this.sections = [];
+                        for(const s in this.post.content) {
+                            if(s !== null) {
+                                this.push('sections', this.post.content[s]);
+                            }
+                        }
                         const d1 = new Date();
                         const d2 = new Date(this.post.time);
                         const diff = d1 - d2;
