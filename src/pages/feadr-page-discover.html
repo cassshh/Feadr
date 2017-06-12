@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/iron-location/iron-location.html">
 <link rel="import" href="../elements/feadr-post-overview.html">
 <link rel="import" href="../elements/feadr-area-input.html">
+<link rel="import" href="../elements/feadr-search-tags.html">
 <link rel="import" href="../feadr-app/shared-styles.html">
 <!--TODO When changing the location make the list appear empty-->
 <dom-module id="feadr-page-discover">
@@ -13,6 +14,7 @@
       :host {
         display: block;
         height: calc(100% - 48px);
+        --paper-input-container-focus-color: #544475;
       }
 
       #list {
@@ -27,6 +29,7 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
       }
     </style>
+    <feadr-search-tags></feadr-search-tags>
     <feadr-area-input location="{{area}}" areaselect="{{type}}"></feadr-area-input>
     <iron-location id="ironLocation"></iron-location>
     <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">

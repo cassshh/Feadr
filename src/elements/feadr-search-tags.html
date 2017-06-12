@@ -1,0 +1,72 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower_components/paper-autocomplete/paper-autocomplete-suggestions.html">
+<dom-module id="feadr-search-tags">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 250px;
+                margin: 0 auto;
+            }
+            paper-autocomplete {
+                --paper-input-container-focus-color: #544475;
+            }
+        </style>
+
+        <paper-autocomplete id="autocomplete" source="[[tags]]" label="Search on tags" on-value-changed="_tagSelected" auto-validate="true" error-message="No posts with this tag">
+        </paper-autocomplete>
+    </template>
+</dom-module>
+<script>
+    class FeadrSearchTags extends Polymer.Element {
+        static get is() {
+            return 'feadr-search-tags';
+        }
+
+        static get properties() {
+            return {
+                tags: {
+                    type: Array,
+                },
+                posts: {
+                    type: Array,
+                },
+            };
+        }
+
+        getTags() {
+            //eslint-disable-next-line
+            database.ref('tags_count').once('value', (snapshot) => {
+                this.tags = [];
+                if(snapshot.val() !== null) {
+                    snapshot.forEach((childSnapshot) => {
+                        this.push('tags', childSnapshot.key);
+                    });
+                }
+            });
+        }
+        ready() {
+            super.ready();
+            this.getTags();
+        }
+        _tagSelected() {
+            // Temporary function can be replaced with Search button click later
+            this.getPosts();
+        }
+        getPosts() {
+            var tag = this.$.autocomplete.value;
+            //eslint-disable-next-line
+            database.ref('tags/' + tag + '/posts').once('value', (snapshot) => {
+                console.log(snapshot.val());
+                this.posts = [];
+            snapshot.forEach((childSnapshot) => {
+                this.push('posts', childSnapshot.key);
+             });
+        });
+        }
+
+    }
+
+    window.customElements.define(FeadrSearchTags.is, FeadrSearchTags);
+</script>

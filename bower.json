@@ -37,7 +37,8 @@
     "iron-a11keys-behavior": "polymerelements/iron-a11y-keys-behavior#^2.0.0",
     "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
-    "l2t-paper-slider": "Link2Twenty/l2t-paper-slider#^1.4.1"
+    "l2t-paper-slider": "Link2Twenty/l2t-paper-slider#^1.4.1",
+    "paper-autocomplete": "#2.0-preview"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0",
