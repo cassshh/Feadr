@@ -27,10 +27,10 @@
             .userName {
                 width: 70%;
                 display: table-cell;
-                padding-left: 13px;
-                padding-top: 13px;
-                font-size: 13px;
-                font-weight: 800;
+                padding-left: 12px;
+                padding-top: 8px;
+                font-size: 14px;
+                font-weight: 700;
                 font-family: 'Open Sans', sans-serif;
                 color: #834D9B;
             }
@@ -39,9 +39,9 @@
                 width: 30%;
                 display: table-cell;
                 text-align: right;
-                padding-right: 13px;
-                padding-top: 13px;
-                font-size: 10px;
+                padding-right: 12px;
+                padding-top: 8px;
+                font-size: 12px;
                 font-weight: 600;
                 opacity: 0.54;
                 font-family: 'Open Sans', sans-serif;
@@ -50,12 +50,12 @@
 
             .text {
                 width: 90%;
-                padding-left: 13px;
-                font-size: 13px;
-                font-weight: 600;
-                opacity: 0.84;
+                padding-left: 12px;
+                font-size: 14px;
+                font-weight: 400;
+                opacity: 0.87;
                 text-align: justify;
-                font-family: 'Open Sans', sans-serif;
+                font-family: 'Roboto', sans-serif;
                 color: #000000;
             }
 
@@ -70,7 +70,12 @@
                 width: 100%;
                 display: inline-block;
                 padding: 10px;
-                text-align: center;
+                text-align: justify;
+                font-size: 12px;
+                font-weight: 600;
+                opacity: 0.87;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
             }
 
             .leftActions {
@@ -84,6 +89,7 @@
                 text-align: justify;
                 text-align-last: center;
                 width: 100%;
+                vertical-align: center;
             }
 
             .rightActions {
@@ -98,10 +104,9 @@
             }
 
             iron-icon {
-                height: 14px;
-                width: 14px;
-                margin-bottom: 2px;
-                opacity: 0.84;
+                height: 12px;
+                top: 50%;
+                bottom: 50%;
                 color: #000000;
             }
 
@@ -120,7 +125,7 @@
         <div id="card" class="card" on-click="_commentSelected">
             <div class="commentHeader">
                 <div class="userName">
-                    [[userName]]
+                    [[userName]]Harr Matey
                 </div>
                 <div class="timePost">
                     [[postTime]]
@@ -133,33 +138,34 @@
                 <div class="leftActions">
                     <div class="upvoteButton">
                         <paper-icon-button class="paperBtn" on-click="_upvoteComment"
-                                           icon="arrow-upward"></paper-icon-button>
+                                           src="../../images/svg/upvote_stroke_gray.svg"></paper-icon-button>
                     </div>
                     <div class="downvoteButton">
                         <paper-icon-button on-click="_downvoteComment" class="paperBtn"
-                                           icon="arrow-downward"></paper-icon-button>
+                                           src="../../images/svg/downvote_stroke_gray.svg"></paper-icon-button>
                     </div>
                 </div>
                 <div class="rightActions">
                     <div class="respondButton">
-                        <paper-icon-button on-click="_stopPropagation" icon="reply"></paper-icon-button>
+                        <paper-icon-button on-click="_stopPropagation" src="../../images/svg/reply_gray.svg"></paper-icon-button>
                     </div>
                     <div class="moreButton">
-                        <paper-icon-button on-click="_stopPropagation" icon="more-vert"></paper-icon-button>
+                        <paper-icon-button on-click="_stopPropagation" src="../../images/svg/more_gray.svg"></paper-icon-button>
                     </div>
                 </div>
             </div>
             <div class="commentFooter">
                 <div class="centerActions">
                     <div class="votes">
-                        <iron-icon icon="arrow-upward"></iron-icon>
                         [[votes]]
+                        <iron-icon src="../../images/svg/upvote_fill_gray.svg"></iron-icon>
+                            </span>
                     </div>
                     <div class="expand">
-                        <iron-icon id="expandIcon" icon="unfold-more"></iron-icon>
+                        <iron-icon id="expandIcon" src="../../images/svg/collapse_gray.svg" style="width: 12px;"></iron-icon>
                     </div>
                     <div class="subComments">
-                        <iron-icon icon="editor:mode-comment"></iron-icon>
+                        <iron-icon src="../../images/svg/comment_fill_gray.svg"></iron-icon>
                         5
                     </div>
                     <template is="dom-if" if="{{OP}}">
@@ -270,12 +276,12 @@
                 if (this.commentSelected === false) {
                     this.commentSelected = true;
                     footer.setAttribute('style', 'display:visible;');
-                    expandIcon.setAttribute('icon', 'unfold-less');
+                    expandIcon.setAttribute('src', '../../images/svg/expand_gray.svg');
                     card.setAttribute('style', 'background-color: #ecedef;');
                 } else {
                     this.commentSelected = false;
                     footer.setAttribute('style', 'display:none;');
-                    expandIcon.setAttribute('icon', 'unfold-more');
+                    expandIcon.setAttribute('src', '../../images/svg/collapse_gray.svg');
                     card.setAttribute('style', 'background-color: #f1f2f3;');
                 }
             }
