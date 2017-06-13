@@ -54,7 +54,7 @@
 
                 <div id="sectionsContainer">
                     <div id="sections">
-                        <feadr-add-post-section text="{{text}}" images="{{images}}" edited-images="{{editedImages}}"></feadr-add-post-section>
+                        <feadr-add-post-section id="firstSection" text="{{text}}" images="{{images}}" edited-images="{{editedImages}}"></feadr-add-post-section>
                     </div>
                     <div id="addBtn">
                         <paper-fab icon="add" on-click="_addSection"></paper-fab>
@@ -104,12 +104,22 @@
                         type: String,
                         notify: true,
                     },
+                    sectionsvalues: {
+                        type: Object,
+                        value: [],
+                        notify: true,
+                    },
                 };
             }
             _addSection() {
                 var sections = this.$.sections;
                 var section = document.createElement('feadr-add-post-section');
                 sections.insertBefore(section, null);
+                this.sectionsvalues.push(section);
+            }
+            ready() {
+                super.ready();
+                this.sectionsvalues.push(this.$.firstSection);
             }
         }
 

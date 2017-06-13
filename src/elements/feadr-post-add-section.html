@@ -88,12 +88,20 @@
                         notify: true,
                         observer: '_editedImagesChanged',
                     },
+                    int: {
+                        type: Number,
+                        value: 0,
+                    },
                 };
             }
             _showImage(images) {
                 var files = images.target.files;
                 var list = this.$.list;
-
+                var that = this;
+                this.int++;
+                if (this.int < 2) {
+                    that.images = [];
+                }
                 for (var i = 0, f; f = files[i]; i++) {
                     this.push('images', files[i]);
                     if (!f.type.match('image.*')) {
