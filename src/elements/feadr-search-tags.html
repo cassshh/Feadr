@@ -29,8 +29,8 @@
                 tags: {
                     type: Array,
                 },
-                tagPosts: {
-                    type: Array,
+                tag: {
+                    type: String,
                     notify: true,
                 },
             };
@@ -53,19 +53,21 @@
         }
         _tagSelected() {
             // Temporary function can be replaced with Search button click later
-            this.getPosts();
+//            this.getPosts();
+            this.tag = this.$.autocomplete.value;
         }
-        getPosts() {
-            var tag = this.$.autocomplete.value;
-            //eslint-disable-next-line
-            database.ref('tags/' + tag + '/posts').once('value', (snapshot) => {
-                console.log(snapshot.val());
-            this.tagPosts = [];
-                snapshot.forEach((childSnapshot) => {
-                    this.push('tagPosts', childSnapshot.key);
-                 });
-             });
-        }
+
+
+//        getPosts() {
+//            var tag = this.$.autocomplete.value;
+//            //eslint-disable-next-line
+//            database.ref('tags/' + tag + '/posts').once('value', (snapshot) => {
+//            this.tagPosts = [];
+//                snapshot.forEach((childSnapshot) => {
+//                    this.push('tagPosts', childSnapshot.key);
+//                 });
+//             });
+//        }
     }
 
 

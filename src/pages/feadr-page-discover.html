@@ -35,47 +35,29 @@
         margin: 0 auto;
         max-width: 800px;
       }
-      .bottomSearchBar {
+      .topSearchBar {
         overflow: hidden;
-        width: 100%;
+        max-width: 800px;
         margin: 0 auto;
+        height: 100px;
       }
       .searchBar {
         float: left;
-        height: 100px;
-        width: 80%;
+        width: 70%;
       }
       .switchButton {
-        float: left;
-        width: 20%;
+        float: right;
         margin-top: 10px;
       }
       paper-button {
+        width: 35px;
         color: white;
         background-color: #544475;
       }
     </style>
-    <div class="content">
-      <iron-location id="ironLocation"></iron-location>
-      <div class="posts">
-        <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">
-          <template>
-            <feadr-post-overview class="post"
-                                 on-tap="handleTap"
-                                 key$="[[post.key]]"
-                                 title$="[[post.val.title]]"
-                                 username$="[[post.val.username]]"
-                                 location$="[[post.val.location.name]]"
-                                 time$="[[post.val.time]]"
-                                 points$="[[post.val.points]]"
-                                 thumbnail$="[[post.val.thumbnail]]">
-            </feadr-post-overview>
-          </template>
-        </iron-list>
-      </div>
-      <div class="bottomSearchBar">
+      <div class="topSearchBar">
         <div class="searchBar">
-          <feadr-search-tags id="tagInput" tagPosts="{{tagPosts}}"></feadr-search-tags>
+          <feadr-search-tags id="tagInput" tag="{{tag}}"></feadr-search-tags>
           <feadr-area-input id="areaInput" style="display: none;" location="{{area}}" areaselect="{{type}}"></feadr-area-input>
         </div>
         <div class="switchButton">
@@ -83,6 +65,24 @@
           <paper-button on-tap="changeSearchBar"><iron-icon icon="autorenew"></iron-icon></paper-button>
         </div>
       </div>
+      <div class="content">
+        <iron-location id="ironLocation"></iron-location>
+        <div class="posts">
+          <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">
+            <template>
+              <feadr-post-overview class="post"
+                                   on-tap="handleTap"
+                                   key$="[[post.key]]"
+                                   title$="[[post.val.title]]"
+                                   username$="[[post.val.username]]"
+                                   location$="[[post.val.location.name]]"
+                                   time$="[[post.val.time]]"
+                                   points$="[[post.val.points]]"
+                                   thumbnail$="[[post.val.thumbnail]]">
+              </feadr-post-overview>
+            </template>
+          </iron-list>
+        </div>
     </div>
   </template>
   <script>
@@ -108,10 +108,9 @@
                       type: String,
                       value: 'tag',
                   },
-                  tagPosts: {
-                      type: Array,
-                      observer: 'tagPostsChanged',
-                      notify: true,
+                  tag: {
+                      type: String,
+                      observer: 'tagChanged',
                   },
               };
           }
@@ -160,6 +159,22 @@
                 this.currentBar = 'tag';
               }
           }
+          tagChanged() {
+              // Get posts based on tag
+              //eslint-disable-next-line
+              database.ref('tags/' + this.tag + '/posts').once('value', (snapshot) => {
+                  this.posts = [];
+                  snapshot.forEach((childSnapshot) => {
+                      database.ref('overview/' + childSnapshot.key).on('value', (post) => {
+                          this.push('posts', {
+                              key: post.key,
+                              val: post.val(),
+                          });
+                       });
+                   });
+               });
+          }
+
       }
       window.customElements.define(FeadrDiscover.is, FeadrDiscover);
   </script>
