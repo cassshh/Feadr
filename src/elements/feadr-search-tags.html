@@ -6,7 +6,7 @@
         <style>
             :host {
                 display: block;
-                width: 250px;
+                max-width: 800px;
                 margin: 0 auto;
             }
             paper-autocomplete {
@@ -14,7 +14,7 @@
             }
         </style>
 
-        <paper-autocomplete id="autocomplete" source="[[tags]]" label="Search on tags" on-value-changed="_tagSelected" auto-validate="true" error-message="No posts with this tag">
+        <paper-autocomplete id="autocomplete" source="[[tags]]" label="Search on tags"  on-value-changed="_tagSelected" auto-validate="true" error-message="No posts with this tag">
         </paper-autocomplete>
     </template>
 </dom-module>
@@ -29,8 +29,9 @@
                 tags: {
                     type: Array,
                 },
-                posts: {
+                tagPosts: {
                     type: Array,
+                    notify: true,
                 },
             };
         }
@@ -59,14 +60,14 @@
             //eslint-disable-next-line
             database.ref('tags/' + tag + '/posts').once('value', (snapshot) => {
                 console.log(snapshot.val());
-                this.posts = [];
-            snapshot.forEach((childSnapshot) => {
-                this.push('posts', childSnapshot.key);
+            this.tagPosts = [];
+                snapshot.forEach((childSnapshot) => {
+                    this.push('tagPosts', childSnapshot.key);
+                 });
              });
-        });
         }
-
     }
+
 
     window.customElements.define(FeadrSearchTags.is, FeadrSearchTags);
 </script>
