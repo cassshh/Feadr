@@ -53,6 +53,11 @@
                     value: null,
                     notify: true,
                 },
+                currentLocation: {
+                    type: Object,
+                    value: null,
+                    notify: true,
+                },
                 disabled: {
                     type: Boolean,
                     default: false,
@@ -103,16 +108,22 @@
 
         _getLocation() {
             const input = this.$.inputLocation;
-            if (navigator.geolocation.getCurrentPosition(showPosition)) {
-                navigator.geolocation.getCurrentPosition(showPosition);
-            } else {
-                input.value = 'Geolocation is not supported by this browser.';
-            }
-
-            function showPosition(position) {
-                input.value = position.coords.latitude + ',' +
-                    position.coords.longitude;
-            }
+            console.log('clicked get location');
+            new Promise((resolve, reject) => {
+                if (navigator.geolocation) {
+                    console.log('trying to resolve promise');
+                    navigator.geolocation.getCurrentPosition(resolve);
+                }
+                else {
+                    input.value = 'Geolocation is not supoorted by this browser';
+                    reject('Something went wrong');
+                }
+            }).then((result) => {
+                console.log('Got Coordinates ');
+                this.place = {lat: result.coords.latitude, long: result.coords.longitude};
+            }, (err) => {
+                console.log(err);
+            });
         }
 
         _locationNameChanged() {
