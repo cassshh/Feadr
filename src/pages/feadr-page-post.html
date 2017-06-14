@@ -202,8 +202,6 @@
                         pointsPost.once('value', (snapshot) => {
                             that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
                         });
-                        this.images = this.post.content.section1.images;
-                        this.text = this.post.content.section1.text;
                         this.sections = [];
                         for(const s in this.post.content) {
                             if(s !== null) {

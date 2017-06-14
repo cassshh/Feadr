@@ -96,76 +96,72 @@
                 const app = document.querySelector('feadr-app');
                 if (app.user) {
                     // User is logged in :)
-                    var newPostRef = database.ref('queue/posts/create').push();
-                    var title = this.title;
-                    var location = this.place;
-                    var tags = this.tags;
+                    const newPostRef = database.ref('queue/posts/create').push();
+                    const title = this.title;
+                    const location = this.place;
+                    const tags = this.tags;
                     let sections = [];
-                    let sectionsObj = [];
-                    let count = 0;
-                    const storageRef = firebase.storage().ref();
-                    var that = this;
+                    const storageRef = storage.ref();
 
                     if (title && location && tags) {
-                        (function loop() {
-                            new Promise((resolve) => {
-                                for (const section of that.sectionsvalues) {
-                                    let url = [];
-                                    let promises = [];
-                                    let postSection = [];
-                                    for (const img of section.images) {
-                                        promises.push(storageRef
-                                            .child('posts/' + newPostRef.key + '/' + img.name)
-                                            .put(img));
-                                    }
-                                    Promise.all(promises).then((results) => {
-                                        for (const result of results) {
-                                            url.push(result.task.snapshot.downloadURL);
-                                        }
-                                    }).then(() => {
-                                        count++;
-                                        const newUrls = url.reduce((acc, cur, i) => {
-                                            acc[i] = cur;
-                                            return acc;
-                                        }, {});
-                                        postSection['images'] = newUrls;
-                                        postSection['text'] = section.text;
-                                        sections.push(postSection);
-                                        if (count === that.sectionsvalues.length) {
-                                            sectionsObj = sections.reduce((acc, cur, i) => {
-                                                acc['section'+i] = cur;
-                                                return acc;
-                                            }, {});
-                                            console.log(sectionsObj);
-                                            const obj = {
-                                                location: {
-                                                    place_id: location.place_id,
-                                                    name: location.name,
-                                                    formatted_address: location.formatted_address,
-                                                    address_components: location.address_components,
-                                                    geometry: {
-                                                        lng: location.geometry.location.lng(),
-                                                        lat: location.geometry.location.lat(),
-                                                    },
-                                                },
-                                                content: sectionsObj,
-                                                title: title,
-                                                tags: tags,
-                                                user_uid: app.user.uid,
-                                                username: app.user.displayName,
-                                                time: firebase.database.ServerValue.TIMESTAMP,
-                                            };
-                                            newPostRef.set(obj);
-                                            that.dispatchEvent(new CustomEvent('requestChangePage', {
-                                                bubbles: true,
-                                                composed: true,
-                                                detail: {route: '/'},
-                                            }));
-                                        }
-                                    });
+                        const obj = {
+                            location: {
+                                place_id: location.place_id,
+                                name: location.name,
+                                formatted_address: location.formatted_address,
+                                address_components: location.address_components,
+                                geometry: {
+                                    lng: location.geometry.location.lng(),
+                                    lat: location.geometry.location.lat(),
+                                },
+                            },
+                            title: title,
+                            tags: tags,
+                            user_uid: app.user.uid,
+                            username: app.user.displayName,
+                            time: firebase.database.ServerValue.TIMESTAMP,
+                        };
+                        const promises = [];
+                        let c = 1;
+                        for (const section of this.sectionsvalues) {
+                            promises.push(new Promise((resolve) => {
+                                const subpromises = [];
+                                let i = 1;
+                                for (const img of section.images) {
+                                    subpromises.push(storageRef
+                                        .child('posts/' + newPostRef.key + '/section' + c + '/' + i + '_' + img.name)
+                                        .put(img));
+                                    i++;
                                 }
-                            }).then(loop);
-                        })(0);
+                                return Promise.all(subpromises).then((results) => {
+                                    const images = [];
+                                    for (const r of results) {
+                                        images.push(r.task.snapshot.downloadURL);
+                                    }
+                                    const s = {
+                                        images: images,
+                                        text: section.text,
+                                    };
+                                    return resolve(s);
+                                });
+                            }));
+                            c++;
+                        }
+                        Promise.all(promises).then((results) => {
+                            let s = 1;
+                            for (const r of results) {
+                                sections['section' + s] = r;
+                                s++;
+                            }
+                            obj.content = sections;
+                            console.log(obj);
+                            newPostRef.set(obj);
+                            this.dispatchEvent(new CustomEvent('requestChangePage', {
+                                bubbles: true,
+                                composed: true,
+                                detail: {route: '/', replace: true},
+                            }));
+                        });
                     }
                 }
             }
