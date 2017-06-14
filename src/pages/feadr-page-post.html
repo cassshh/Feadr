@@ -261,9 +261,8 @@
                     };
 
                     database.ref('queue/favorites').push(data);
-                    console.log(app.user.uid);
                 }
-            };
+            }
 
             getComments() {
                 database.ref('post_comments/' + this.postid)
