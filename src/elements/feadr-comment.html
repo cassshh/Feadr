@@ -241,7 +241,7 @@
                         that.commentText = snapshot.val().text;
                         that.userName = snapshot.val().user;
                                                 var pointsComment = database.ref('votes/comments/' + that.key);
-                        pointsComment.once('value', (snapshot) => {
+                        pointsComment.on('value', (snapshot) => {
                             that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
                         });
                         that.user_uid = snapshot.val().user_uid;

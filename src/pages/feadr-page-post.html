@@ -194,12 +194,12 @@
             }
 
             getPostData() {
-                database.ref('posts/' + this.postid).once('value', (snapshot) => {
+                database.ref('posts/' + this.postid).on('value', (snapshot) => {
                     if (snapshot.val() !== null) {
                         this.post = snapshot.val();
                         var pointsPost = database.ref('votes/posts/' + this.postid);
                         const that = this;
-                        pointsPost.once('value', (snapshot) => {
+                        pointsPost.on('value', (snapshot) => {
                             that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
                         });
                         this.sections = [];
