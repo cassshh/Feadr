@@ -90,7 +90,7 @@
                     <div class="rightIcons">
                         <paper-icon-button icon="arrow-upward" on-click="_upvotePost"></paper-icon-button>
                         <paper-icon-button icon="arrow-downward" on-click="_downvotePost"></paper-icon-button>
-                        <paper-icon-button icon="favorite"></paper-icon-button>
+                        <paper-icon-button icon="favorite" on-click="_postFavorite"></paper-icon-button>
                         <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
                             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                             <paper-listbox slot="dropdown-content">
@@ -252,6 +252,18 @@
                 };
                 database.ref('queue/votes/post/downvote').push(data);
             }
+
+            _postFavorite() {
+                const app = document.querySelector('feadr-app');
+                if(app.user.uid) {
+                    const data = {
+                        post_uid: this.postid, // uid of the type
+                    };
+
+                    database.ref('queue/favorites').push(data);
+                    console.log(app.user.uid);
+                }
+            };
 
             getComments() {
                 database.ref('post_comments/' + this.postid)
