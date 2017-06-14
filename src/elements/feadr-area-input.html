@@ -9,35 +9,25 @@
     <template>
         <style>
             .wrapper {
+                overflow: hidden;
+                max-width: 800px;
                 margin: 0 auto;
-                width: 100%;
-                height: 100%;
-                border: 1px solid black;
-                overflow: scroll;
-            }
-            .title {
-                text-align: center;
-            }
-            .currentLocationWrapper {
-                width: 100%;
-                border: 1px solid black;
+                height: 100px;
             }
             .locationWrapper {
-
+                margin-left: 5px;
                 width: 65%;
                 float: left;
             }
             #selectorWrapper {
                 width: 30%;
-                float: left;
+                float: right;
             }
-            .location {
-                width: 50%;
-                text-align: center;
-                float: left;
+            .box {
+                display: block;
             }
             paper-dropdown-menu, paper-listbox {
-                width: 80%;
+                width: 70%;
             }
 
             paper-dropdown-menu {
@@ -48,10 +38,6 @@
 
         </style>
         <div class="wrapper">
-            <div class="title"><h2>Where do you want to search?</h2></div>
-            <div class="currentLocationWrapper">
-            <div class="location">Your current searching location: {{location}}</div> <div class="location">Area searched: {{areaselect}}</div>
-            </div>
             <div class="box">
                 <div class="locationWrapper"><feadr-location-input place={{place}} origin="{{origin}}"></feadr-location-input></div>
                 <div id="selectorWrapper" style="visibility:hidden;"><paper-dropdown-menu label="Area selector">
