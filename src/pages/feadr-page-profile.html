@@ -66,13 +66,6 @@
                 color: #FFFFFF;
             }
 
-            .settingsIcon{
-                height: 96px;
-                width: 96px;
-                align-self: flex-start;
-                flex:1;
-            }
-
             paper-fab {
                 margin: 14px;
                 position: absolute;
@@ -110,9 +103,7 @@
         </style>
         <div class="profileHeader">
             <div class="profileStars">
-                <div class="profilePicture">
-
-                </div>
+                <div class="profilePicture"></div>
                 <div class="profileDetails">
                     <div class="profileName">
                         Steve Pennings
@@ -127,15 +118,15 @@
             </div>
         </div>
         <paper-tabs id="tabs">
-            <paper-tab name="posts" on-tap="getPosts">
+            <paper-tab name="posts" on-tap="navigate">
                 <iron-icon class="unselected" src="../../images/svg/post_gray.svg"></iron-icon>
                 <iron-icon class="selected" src="../../images/svg/post_black.svg"></iron-icon>
             </paper-tab>
-            <paper-tab name="favorites" on-tap="getFavorites">
+            <paper-tab name="favorites" on-tap="navigate">
                 <iron-icon class="unselected" src="../../images/svg/favorite_gray.svg"></iron-icon>
                 <iron-icon class="selected" src="../../images/svg/favorite_black.svg"></iron-icon>
             </paper-tab>
-            <paper-tab name="comments" on-tap="getComments">
+            <paper-tab name="comments" on-tap="navigate">
                 <iron-icon class="unselected" src="../../images/svg/comment_gray.svg"></iron-icon>
                 <iron-icon class="selected" src="../../images/svg/comment_black.svg"></iron-icon>
             </paper-tab>
@@ -152,8 +143,8 @@
                 return {};
             }
 
-            navigate(){
-                console.log("I switched");
+            navigate() {
+                console.log('switching between elements coming');
             }
         }
 
