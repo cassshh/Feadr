@@ -74,7 +74,7 @@
                     const faveRef = database.ref('user_favorites/' + app.user.uid + '/posts');
                     faveRef.once('value', (snapshot) => {
                         if (!snapshot.val()) {
-                         //No favorites
+                         // No favorites
                         }
                     });
                     faveRef.on('child_added', (snapshot) => {
