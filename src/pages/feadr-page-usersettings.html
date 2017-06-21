@@ -82,9 +82,9 @@
                     <p>Avatar</p>
                     <div title="Edit avatar" class="avatar-upload">
                         <label for="avatarEdit">
-                            <img id="avatar" on-change="_getImage" />
+                            <div id="avatar"></div>
                         </label>
-                            <input type="file" id="avatarEdit">
+                            <input type="file" id="avatarEdit" on-change="_getImage">
                     </div>
                 </div>
                 <div class="subjectWrapper">
@@ -163,35 +163,55 @@
                 if(typeof username !== 'undefined' && this.changes.imageUpload === true && this.notification === true) {
                     // username has been changed, new avatar has been set and notification has been set to true
                     console.log('photo url = ' + 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid);
-                    console.log('The username of the user = '+this.username);
+                    console.log('The username of the user = '+username);
                     firebaseRef.update({
-                        displayName: this.username,
+                        displayName: username,
                         photoURL: 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid,
                        // notification: '',
                     });
                 } else if(typeof username !== 'undefined' && this.changes.imageUpload === true && this.notification === false) {
                     // username has been changed, new avatar has been set and notifications are set to false
                     console.log('photo url = ' + 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid);
-                    console.log('The username of the user = '+this.username);
+                    console.log('The username of the user = '+username);
                     firebaseRef.update({
-                        displayName: this.username,
+                        displayName: username,
                         photoURL: 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid,
                        // notification: '',
                     });
                     // eslint-disable-next-line
                 } else if(typeof username !== 'undefined' && this.changes.imageUpload === false && this.notification === false) {
                     // username has been changed, new avatar has not been set and notifications are set to false
-                    console.log('The username of the user = '+this.username);
+                    console.log('The username of the user = '+username);
                     firebaseRef.update({
-                        displayName: this.username,
+                        displayName: username,
                     });
                 } else if(typeof username === 'undefined' && this.changes.imageUpload === true && this.notification === true) {
-                    // username has not been changed, new avatar has been set and notifications are set to false
+                    // username has not been changed, new avatar has been set and notifications are set to true
                     console.log('The username of the user is not set.');
                     console.log('The username want notifications.');
                     console.log('The username uploaded a new avatar using the uid.');
                     firebaseRef.update({
-                        photoURL: 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid,
+                        photoURL: 'gs://feadr-develop.appspot.com/avatars/' + this.userObject.uid,
+                        // notification: '',
+                    });
+                    // eslint-disable-next-line
+                } else if(typeof username !== 'undefined' && this.changes.imageUpload === false && this.notification === false) {
+                    // username has been changed, new avatar has not been set and notifications are set to false
+                    console.log('The username of the user is set.' + username);
+                    console.log('The username want notifications.');
+                    console.log('The username uploaded no new avatar using the uid.');
+                    firebaseRef.update({
+                        displayName: username,
+                        // notification: '',
+                    });
+                    // eslint-disable-next-line
+                } else if(typeof username !== 'undefined' && this.changes.imageUpload === false && this.notification === true) {
+                    // username has been changed, new avatar has not been set and notifications are set to false
+                    console.log('The username of the user is set.' + username);
+                    console.log('The username want notifications.');
+                    console.log('The username uploaded no new avatar using the uid.');
+                    firebaseRef.update({
+                        displayName: username,
                         // notification: '',
                     });
                 } else {
