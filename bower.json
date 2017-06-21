@@ -38,7 +38,9 @@
     "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
     "l2t-paper-slider": "Link2Twenty/l2t-paper-slider#^1.4.1",
-    "paper-autocomplete": "#2.0-preview"
+    "paper-autocomplete": "#2.0-preview",
+    "paper-radio-button": "PolymerElements/paper-radio-button#2.0.0",
+    "paper-checkbox": "PolymerElements/paper-checkbox#2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0",
