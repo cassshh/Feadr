@@ -1,17 +1,21 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../feadr-app/shared-styles.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../feadr-app/shared-styles.html">
+<link rel="import" href="../elements/feadr-profile-favorites.html">
+
 
 <dom-module id="feadr-page-profile">
     <template>
         <style include="shared-styles">
             :host {
                 display: block;
-                height: 100%;
+                height: calc(100% - 48px);
                 margin-bottom: 48px;
             }
 
@@ -32,6 +36,11 @@
                 align-items: center;
             }
 
+            .headerContent {
+                margin: 0 auto;
+                max-width: 800px;
+            }
+
             .profilePicture {
                 margin-left: 23px;
                 width: 90px;
@@ -40,11 +49,10 @@
                 background-repeat: no-repeat;
                 background-position: center center;
                 background-size: cover;
-                background-image: url('http://s1.1zoom.me/big3/209/358749-sepik.jpg');
                 border: 3px solid #f5f5f5;
             }
 
-            .profileDetails{
+            .profileDetails {
                 margin-left: 20px;
             }
 
@@ -100,37 +108,53 @@
                 display: none;
             }
 
+            .content {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
         </style>
         <div class="profileHeader">
             <div class="profileStars">
-                <div class="profilePicture"></div>
+                <div class="profilePicture" style="background-image: url('[[user.photoURL]]');"></div>
                 <div class="profileDetails">
                     <div class="profileName">
-                        Steve Pennings
+                        [[user.displayName]]
                     </div>
                     <div class="profilePosts">
                         16 posts
                     </div>
                 </div>
                 <div>
-                <paper-fab mini src="../../images/svg/settings_gray.svg"></paper-fab>
+                    <paper-fab mini src="../../images/svg/settings_gray.svg"></paper-fab>
                 </div>
             </div>
         </div>
-        <paper-tabs id="tabs">
-            <paper-tab name="posts" on-tap="navigate">
+
+        <paper-tabs id="tab" selected="[[tab]]">
+            <paper-tab name="posts" on-tap="_navigate">
                 <iron-icon class="unselected" src="../../images/svg/post_gray.svg"></iron-icon>
                 <iron-icon class="selected" src="../../images/svg/post_black.svg"></iron-icon>
             </paper-tab>
-            <paper-tab name="favorites" on-tap="navigate">
+            <paper-tab name="favorites" on-tap="_navigate">
                 <iron-icon class="unselected" src="../../images/svg/favorite_gray.svg"></iron-icon>
                 <iron-icon class="selected" src="../../images/svg/favorite_black.svg"></iron-icon>
             </paper-tab>
-            <paper-tab name="comments" on-tap="navigate">
+            <paper-tab name="comments" on-tap="_navigate">
                 <iron-icon class="unselected" src="../../images/svg/comment_gray.svg"></iron-icon>
                 <iron-icon class="selected" src="../../images/svg/comment_black.svg"></iron-icon>
             </paper-tab>
         </paper-tabs>
+
+        <iron-pages class="content"
+                attr-for-selected="name"
+                fallback-selection="fallback"
+                selected="{{tab}}">
+            <div name="posts" >posts</div>
+            <div name="favorites">favorites</div>
+            <div name="comments">comments</div>
+            <feadr-page-404 name="fallback"></feadr-page-404>
+        </iron-pages>
     </template>
 
     <script>
@@ -140,11 +164,31 @@
             }
 
             static get properties() {
-                return {};
+                return {
+                    user: {
+                        type: Object,
+                        value: null,
+                    },
+                    tab: {
+                        type: String,
+                        value: 'posts',
+                    },
+                };
             }
 
-            navigate() {
-                console.log('switching between elements coming');
+            ready() {
+                super.ready();
+                const app = document.querySelector('feadr-app');
+                database.ref('users/' + app.user.uid).on('value', (snapshot) => {
+                    if (snapshot.val() !== null) {
+                        this.user = snapshot.val();
+                    }
+                });
+            }
+
+            _navigate(e) {
+                let name = e.target.getAttribute('name');
+                this.tab = name;
             }
         }
 

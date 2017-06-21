@@ -10,14 +10,38 @@
             }
 
             .container {
+                height: 100%;
+                width: 100%;
                 max-width: 800px;
                 margin: 0 auto;
-                padding: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: row;
+                padding: 24px;
+            }
+
+            .charlie {
+                background-image: url('../../images/svg/mascotte_charlie.svg');
+                height: 200px;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: contain;
+                flex: 1;
+            }
+
+            .content {
+                text-align: right;
+                opacity: 0.87;
+                flex: 1;
             }
         </style>
         <div class="container">
-            <h1>Error 404</h1>
-            <span>[[error]]</span>
+            <div class="content">
+                <h1>Error 404</h1>
+                <span>[[error]]</span>
+            </div>
+            <div class="charlie"></div>
         </div>
     </template>
 
@@ -31,7 +55,7 @@
                 return {
                     error: {
                         type: String,
-                        value: 'Something went wrong...',
+                        value: 'This is not the webpage you are looking for.',
                     },
                 };
             }
