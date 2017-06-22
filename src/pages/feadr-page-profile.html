@@ -193,6 +193,10 @@
 
             _navigate(e) {
                 let name = e.target.getAttribute('name');
+                if (name === null) {
+                    // Pressed icon, so get parents value.
+                    name = e.target.parentElement.getAttribute('name');
+                }
                 this.tab = name;
             }
         }
