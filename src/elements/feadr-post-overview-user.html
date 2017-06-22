@@ -111,6 +111,11 @@
                         type: Boolean,
                         computed: 'computeLoading(loading, loadingData)',
                     },
+                    user_uid: {
+                        type: String,
+                        value: '',
+                        computed: 'getUserPosts()',
+                    },
                 };
             }
 
