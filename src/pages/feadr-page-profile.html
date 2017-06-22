@@ -180,11 +180,15 @@
             ready() {
                 super.ready();
                 const app = document.querySelector('feadr-app');
-                database.ref('users/' + app.user.uid).on('value', (snapshot) => {
-                    if (snapshot.val() !== null) {
-                        this.user = snapshot.val();
-                    }
-                });
+                if(app.user) {
+                    this.user = app.user;
+                } else{
+                    this.dispatchEvent(new CustomEvent('requestChangePage', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {route: '/login'},
+                    }));
+                }
             }
 
             _navigate(e) {
