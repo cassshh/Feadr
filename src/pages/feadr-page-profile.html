@@ -8,6 +8,7 @@
 
 <link rel="import" href="../feadr-app/shared-styles.html">
 <link rel="import" href="../elements/feadr-profile-favorites.html">
+<link rel="import" href="../elements/feadr-post-overview-user.html">
 
 
 <dom-module id="feadr-page-profile">
@@ -150,8 +151,8 @@
                 attr-for-selected="name"
                 fallback-selection="fallback"
                 selected="{{tab}}">
-            <div name="posts" >posts</div>
-            <div name="favorites">favorites</div>
+            <div name="posts" ><feadr-post-overview-user></feadr-post-overview-user></div>
+            <div name="favorites"><feadr-profile-favorites></feadr-profile-favorites></div>
             <div name="comments">comments</div>
             <feadr-page-404 name="fallback"></feadr-page-404>
         </iron-pages>
