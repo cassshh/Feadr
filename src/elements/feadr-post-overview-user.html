@@ -161,6 +161,10 @@
                                 });
                             }
                             if (this.loadingData) this.loadingData = false;
+                            database.ref('users/' + post.val().user_uid).on('value', (user) => {
+                                this.set('posts.' + this.getIndexOf(post) + '.val.username',
+                                    user.val().displayName);
+                            });
                             database.ref('votes/posts/' + snapshot.key).on('value', (votes) => {
                                 this.set('posts.' + this.getIndexOf(post) + '.val.points',
                                     votes.val().upvotes - votes.val().downvotes);
