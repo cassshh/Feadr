@@ -135,35 +135,40 @@
 
             getUserPosts() {
                 this.loadingData = true;
-                const ref = database.ref('user_posts/' + this.user_uid);
-                ref.once('value', (snapshot) => {
-                    if (!snapshot.val()) {
-                        // No posts. Show message.
-                        if (this.loadingData) this.loadingData = false;
-                    }
-                });
-                ref.on('child_added', (snapshot) => {
-                    database.ref('overview/' + snapshot.key).on('value', (post) => {
-                        const index = this.getIndexOf(post);
-                        if (index >= 0) {
-                            // Update post if exists
-                            this.set('posts.' + index, {
-                                key: post.key,
-                                val: post.val(),
-                            });
-                        } else {
-                            this.push('posts', {
-                                key: post.key,
-                                val: post.val(),
-                            });
+                const app = document.querySelector('feadr-app');
+                if (app.user) {
+                    const ref = database.ref('user_posts/' + app.user.uid);
+                    ref.once('value', (snapshot) => {
+                        console.log(snapshot.val());
+                        if (!snapshot.val()) {
+                            // No posts. Show message.
+                            if (this.loadingData) this.loadingData = false;
                         }
-                        if (this.loadingData) this.loadingData = false;
-                        database.ref('votes/posts/' + snapshot.key).on('value', (votes) => {
-                            this.set('posts.' + this.getIndexOf(post) + '.val.points',
-                                votes.val().upvotes - votes.val().downvotes);
+                    });
+                    ref.on('child_added', (snapshot) => {
+                        database.ref('overview/' + snapshot.key).on('value', (post) => {
+                            const index = this.getIndexOf(post);
+                            if (index >= 0) {
+                                // Update post if exists
+                                this.set('posts.' + index, {
+                                    key: post.key,
+                                    val: post.val(),
+                                });
+                            } else {
+                                this.push('posts', {
+                                    key: post.key,
+                                    val: post.val(),
+                                });
+                            }
+                            if (this.loadingData) this.loadingData = false;
+                            database.ref('votes/posts/' + snapshot.key).on('value', (votes) => {
+                                this.set('posts.' + this.getIndexOf(post) + '.val.points',
+                                    votes.val().upvotes - votes.val().downvotes);
+                            });
                         });
                     });
-                });
+                }
+                this.loadingData = false;
             }
 
             getIndexOf(snapshot) {
