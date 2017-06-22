@@ -9,7 +9,8 @@
     "src/pages/feadr-page-discover.html",
     "src/pages/feadr-page-edit-post.html",
     "src/pages/feadr-page-profile.html",
-    "src/pages/feadr-page-login.html"
+    "src/pages/feadr-page-login.html",
+    "src/pages/feadr-page-usersettings.html"
   ],
   "sources": [
     "src/**/*",

@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 <div>
-                    <paper-fab mini src="../../images/svg/settings_gray.svg"></paper-fab>
+                    <paper-fab on-tap="settings" mini src="../../images/svg/settings_gray.svg"></paper-fab>
                 </div>
             </div>
         </div>
@@ -198,6 +198,14 @@
                     name = e.target.parentElement.getAttribute('name');
                 }
                 this.tab = name;
+            }
+
+            settings() {
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {route: '/usersettings'},
+                }));
             }
         }
 
