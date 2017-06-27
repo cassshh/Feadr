@@ -84,7 +84,7 @@
             <app-header slot="header" condenses fixed>
                 <app-toolbar>
                     <!-- Left icon -->
-                    <paper-icon-button icon="arrow-back"></paper-icon-button>
+                    <paper-icon-button icon="arrow-back" on-click="_goBack"></paper-icon-button>
                     <!-- right aligned icons -->
                     <div main-title></div>
                     <div class="rightIcons">
@@ -302,6 +302,10 @@
                         deleteButton.setAttribute('style', 'display: none');
                     }
                 }
+            }
+
+            _goBack() {
+                window.history.back();
             }
 
             edit() {
