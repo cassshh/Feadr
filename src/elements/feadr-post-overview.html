@@ -1,0 +1,232 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<!-- import the module  -->
+<link rel="import" href="../feadr-app/shared-styles.html">
+<!-- import conditional template -->
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<dom-module id="feadr-post-overview">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: flex;
+                flex-direction: row;
+                padding: 8px 0 8px 0;
+            }
+
+            .points-container {
+                width: 56px;
+                min-width: 56px;
+                margin: auto 4px;
+                text-align: center;
+            }
+
+            .points-arrow-icon {
+                width: 100%;
+                display: block;
+                height: 16px;
+            }
+
+            .points {
+                display: block;
+                width: 100%;
+                font-size: 9pt;
+                font-weight: bold;
+            }
+
+            .content {
+                width: 100%;
+            }
+
+            .title-container {
+                padding-top: 4px;
+                padding-bottom: 4px;
+                text-align: justify;
+            }
+
+            .title {
+                font-size: 13pt;
+                font-weight: bolder;
+            }
+
+            .location-container {
+                display: flex;
+                flex-direction: row;
+                margin: 2px 0 2px 0;
+            }
+
+            .location-icon {
+                height: 16px;
+                margin: auto 0;
+            }
+
+            .location {
+                font-size: 10pt;
+                font-style: italic;
+                font-weight: 400;
+            }
+
+            .user-time-container {
+                display: flex;
+                flex-direction: row;
+                margin: 4px 0 4px 0;
+            }
+
+            .username {
+                font-size: 10pt;
+                font-weight: 700;
+                opacity: 0.7;
+            }
+
+            .clock-icon {
+                height: 16px;
+                margin: auto 4px auto 8px;
+                opacity: 0.6;
+            }
+
+            .time {
+                font-size: 10pt;
+                opacity: 0.6;
+            }
+
+            .image {
+                margin: auto 16px auto 8px;
+                width: 56px;
+                min-width: 56px;
+                height: 56px;
+                overflow: hidden;
+            }
+
+            .no-image {
+                margin: auto 16px auto 8px;
+                width: 56px;
+                min-width: 56px;
+                height: 56px;
+                overflow: hidden;
+                opacity: 0.45;
+            }
+
+        </style>
+        <div class="points-container">
+            <img class="points-arrow-icon" src="../../images/svg/arrow_up_black.svg">
+            <span class="points">[[points]]</span>
+            <img class="points-arrow-icon" src="../../images/svg/arrow_down_black.svg">
+        </div>
+        <div class="content">
+            <div class="title-container">
+                <span class="title">[[title]]</span>
+            </div>
+            <div class="location-container">
+                <img class="location-icon" src="../../images/svg/location_on_black.svg"/>
+                <span class="location">[[location]]</span>
+            </div>
+            <div class="user-time-container">
+                <span class="username">[[username]]</span>
+                <img class="clock-icon" src="../../images/svg/time_black.svg"/>
+                <span class="time">[[formatTime]]</span>
+            </div>
+        </div>
+        <template is="dom-if" if="[[!thumbnail]]">
+            <!-- If no thumbnail -->
+            <img class="no-image" src="../../images/svg/subject_black.svg">
+        </template>
+        <template is="dom-if" if="[[thumbnail]]">
+            <!-- If thumbnail -->
+            <img class="image" src$="[[thumbnail]]">
+        </template>
+    </template>
+
+    <script>
+        // eslint-disable-next-line
+        class FeadrPostOverview extends Polymer.GestureEventListeners(Polymer.Element) {
+            static get is() {
+                return 'feadr-post-overview';
+            }
+
+            constructor() {
+                super();
+                Polymer.Gestures.addListener(this, 'tap', () => {
+                });
+            }
+
+            static get properties() {
+                return {
+                    title: {
+                        type: String,
+                        value: 'This is a default title because you didn\'t give me one',
+                    },
+                    username: {
+                        type: String,
+                        value: 'JohnDoe',
+                    },
+                    location: {
+                        type: String,
+                        value: 'Stenden Uni, Emmen, NL',
+                    },
+                    time: {
+                        type: String,
+                        value: null,
+                        observer: '_changedTime',
+                    },
+                    formatTime: {
+                        type: String,
+                        value: 'now',
+                    },
+                    points: {
+                        type: Number,
+                        value: 0,
+                    },
+                    thumbnail: {
+                        type: String,
+                        value: null,
+                    },
+                };
+            }
+
+            _changedTime(val) {
+                if (val) {
+                    const d1 = new Date();
+                    const d2 = new Date(this.time);
+                    if (d1.getFullYear() - d2.getFullYear()) {
+                        const i = d1.getFullYear() - d2.getFullYear();
+                        if (i > 1) {
+                            this.formatTime = i + ' years ago';
+                        } else {
+                            this.formatTime = i + ' year ago';
+                        }
+                    } else if (d1.getMonth() - d2.getMonth()) {
+                        const i = d1.getMonth() - d2.getMonth();
+                        if (i > 1) {
+                            this.formatTime = i + ' months ago';
+                        } else {
+                            this.formatTime = i + ' month ago';
+                        }
+                    } else if (d1.getDate() - d2.getDate()) {
+                        const i = d1.getDate() - d2.getDate();
+                        if (i > 1) {
+                            this.formatTime = i + ' days ago';
+                        } else {
+                            this.formatTime = i + ' day ago';
+                        }
+                    } else if (d1.getHours() - d2.getHours()) {
+                        const i = d1.getHours() - d2.getHours();
+                        if (i > 1) {
+                            this.formatTime = i + ' hours ago';
+                        } else {
+                            this.formatTime = i + ' hour ago';
+                        }
+                    } else if (d1.getMinutes() - d2.getMinutes()) {
+                        const i = d1.getMinutes() - d2.getMinutes();
+                        if (i > 1) {
+                            this.formatTime = i + ' minutes ago';
+                        } else {
+                            this.formatTime = i + ' minute ago';
+                        }
+                    }
+                }
+            }
+        }
+
+        window.customElements.define(FeadrPostOverview.is, FeadrPostOverview);
+    </script>
+</dom-module>

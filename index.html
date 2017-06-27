@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
@@ -49,19 +49,46 @@
     <!-- Load application shell -->
     <link rel="import" href="/src/feadr-app/feadr-app.html">
 
+    <!--Load firebase script. -->
+    <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script>
+        firebase.initializeApp(config);
+        // eslint-disable-next-line
+        const database = firebase.database();
+        // eslint-disable-next-line
+        const storage = firebase.storage();
+    </script>
+
     <!-- Add any global styles for body, document, etc. -->
     <style>
-      body {
-        margin: 0;
-        font-family: 'Roboto', 'Noto', sans-serif;
-        line-height: 1.5;
-        min-height: 100vh;
-        color: #eeeeee;
-        background-color: #313131;
-      }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', 'Noto', sans-serif;
+            color: #212121;
+            background-color: #f5f5f5;
+        }
+
+        .noscript {
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .noscript h1, .noscript h3 {
+            margin: 20px 50px 0 50px;
+            letter-spacing: 0.1em;
+        }
     </style>
-  </head>
-  <body>
-    <feadr-app></feadr-app>
-  </body>
+</head>
+<body>
+<feadr-app></feadr-app>
+<noscript class="noscript">
+    <h1>You have JavaScript disabled :(</h1>
+    <h3>Please enable JavaScript to use this website</h3>
+</noscript>
+</body>
 </html>

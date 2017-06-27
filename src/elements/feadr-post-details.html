@@ -1,0 +1,141 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="feadr-post-details">
+  <template>
+    <style>
+      :host {
+        display: block;
+        font-color: #000000;
+      }
+
+      /* User header */
+      .userHeader {
+        padding-top: 10px;
+        padding-left: 16px;
+        padding-right: 16px;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .profilePictureContainer {
+        margin-right: 10px;
+        vertical-align: top;
+      }
+
+      .postInfoContainer {
+        width: 100%;
+        overflow: hidden;
+        vertical-align: top;
+      }
+
+      .topInfo {
+        width: 100%;
+        float: left;
+      }
+
+      .botInfo {
+        width: 100%;
+        float: left;
+      }
+
+      .title {
+        width: 85%;
+        float: left;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 13px;
+        opacity: 0.87;
+        font-weight: 600;
+        text-align: justify;
+      }
+
+      .postTime {
+        width: 15%;
+        float: right;
+        margin-top: 2px;
+        text-align: right;
+        font-size: 10px;
+        font-weight: 600;
+        opacity: 0.54;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      .username {
+        width: 60%;
+        float: left;
+        font-size: 10px;
+        opacity: 0.54;
+        font-weight: 600;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      .location {
+        width: 40%;
+        text-align: right;
+        float: right;
+        font-size: 10px;
+        font-weight: 600;
+        opacity: 0.54;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      .picture {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-image: url('http://i.imgur.com/6FS0nIp.jpg');
+      }
+    </style>
+
+    <div class="userHeader">
+      <div class="profilePictureContainer">
+        <div class="profilePicture">
+          <div class="picture"></div>
+        </div>
+      </div>
+      <div class="postInfoContainer">
+        <div class="topInfo">
+          <div class="title">[[title]]</div>
+          <div class="postTime">[[time]]</div>
+        </div>
+        <div class="botInfo">
+          <div class="username">[[username]]</div>
+          <div class="location">[[location]]</div>
+        </div>
+      </div>
+    </div>
+
+  </template>
+  <script>
+    class FeadrPostDetails extends Polymer.Element {
+      static get is() {
+        return 'feadr-post-details';
+      }
+
+      static get properties() {
+        return {
+          title: {
+            type: String,
+            value: 'Your standard title',
+          },
+          time: {
+            type: String,
+            value: 'now',
+          },
+          username: {
+            type: String,
+            value: 'BoatyMcBoatface',
+          },
+          location: {
+            type: String,
+            value: 'Emmen City Lifestyle, Drenthe, NL',
+          },
+        };
+      }
+    }
+
+    window.customElements.define(FeadrPostDetails.is, FeadrPostDetails);
+  </script>
+</dom-module>

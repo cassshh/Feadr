@@ -1,0 +1,241 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<!--paper input used for editing string values, such as: username-->
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<!--Iron icons used for paper input prefix-->
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<!--Paper checkbox for setting the notifications to true or false-->
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<!---->
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../feadr-app/shared-styles.html">
+
+<dom-module id="feadr-page-usersettings">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                height: 75%;
+                margin-bottom: 48px;
+            }
+            .wrapper {
+                height: 100px;
+                background: linear-gradient(#834d9b, #34284f);
+                text-align:center;
+            }
+            .head {
+                height: 100%;
+                color: white;
+                background: url('../../images/svg/stars_flipped.svg') repeat-x center center fixed;
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+            .headTitle {
+                width: 100%;
+            }
+            .innerWrapper {
+                padding-top: 1vh;
+                display: block;
+
+            }
+            .subjectWrapper {
+                /*text-align:center;*/
+                margin: 0 auto;
+                width: 200px;
+                padding: 0.5em;
+                /*border: 1px solid green;*/
+            }
+            #avatar {
+                margin: 0 auto;
+                width: 6em;
+                height: 6em;
+                border-radius: 50%;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-image: url('');
+                background-size: cover;
+                border: 3px solid #f5f5f5;
+            }
+            .avatar-upload > input {
+                display: none;
+            }
+            paper-input {
+                max-width: inherit;
+            }
+            iron-icon {
+                margin-right: 0.1em;
+                margin-bottom: 0.2em;
+            }
+
+        </style>
+
+        <div class="wrapper">
+            <div class="head">
+                <div class="headTitle"><h2>Settings page for {{userObject.displayName}}</h2></div>
+            </div>
+            <div class="innerWrapper">
+                <div class="subjectWrapper">
+                    <p>Avatar</p>
+                    <div title="Edit avatar" class="avatar-upload">
+                        <label for="avatarEdit">
+                            <div id="avatar"></div>
+                        </label>
+                            <input type="file" id="avatarEdit" on-change="_getImage">
+                    </div>
+                </div>
+                <div class="subjectWrapper">
+                    <div class="usernameEdit" title="Edit username">
+                        <p>Username</p>
+                        <paper-input id="usernameEdit" style="text-align: left; margin-top: -1vh;" label="{{userObject.displayName}}">
+                        <iron-icon icon="perm-identity" slot="prefix"></iron-icon>
+                    </paper-input>
+                    </div>
+                </div>
+                <div class="subjectWrapper">
+                    <div class="notificationEdit" title="Edit notification settings">
+                        <paper-checkbox id="notification" checked="{{notification}}">Set notification</paper-checkbox>
+                    </div>
+                </div>
+                <div class="subjectWrapper">
+                    <paper-button raised on-tap="_saveChanges"> Save </paper-button>
+                </div>
+            </div>
+        </div>
+        </template>
+        <script>
+        class FeadrPageUsersettings extends Polymer.Element {
+            static get is() {return 'feadr-page-usersettings';}
+            static get properties() {
+                return {
+                    userObject: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                    },
+                    notification: {
+                        type: Boolean,
+                        value: true,
+                        observer: 'onchange',
+                    },
+                    changes: {
+                        type: Object,
+                        value: {imageUpload: false},
+                    },
+                };
+            }
+            onchange() {
+                //eslint-disable-next-line
+                let bool = this.notification;
+                bool = !bool;
+//                console.log(bool);
+            }
+            _getImage() {
+                let avatarRef = this.$.avatar;
+                let uid = this.userObject.uid;
+                const that = this;
+                console.log('trying to get image');
+                let file = this.$.avatarEdit.files[0];
+                let reader = new FileReader();
+                reader.onloadend = function() {
+                    let image = reader.result;
+                    avatarRef.style.backgroundImage = 'url('+ image+')';
+                    const userAvatar = firebase.storage().ref().child('avatars/'+uid);
+                    userAvatar.put(file).then(function(snapshot) {
+                        console.log('uploaded file');
+                        that.changes = {imageUpload: true};
+                    });
+                };
+                if(file) {
+                    reader.readAsDataURL(file);
+                }else {
+                    console.log('else case reached, file was not uploaded!');
+                }
+            }
+            _saveChanges() {
+                let username = this.$.usernameEdit.value;
+                console.log(username + ' and ' + this.notification +' and '+ this.changes.imageUpload);
+                console.log('save changes clicked');
+                const firebaseRef = firebase.database().ref().child('users/'+this.userObject.uid+'/');
+                if(typeof username !== 'undefined' && this.changes.imageUpload === true && this.notification === true) {
+                    // username has been changed, new avatar has been set and notification has been set to true
+                    console.log('photo url = ' + 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid);
+                    console.log('The username of the user = '+username);
+                    firebaseRef.update({
+                        displayName: username,
+                        photoURL: 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid,
+                       // notification: '',
+                    });
+                } else if(typeof username !== 'undefined' && this.changes.imageUpload === true && this.notification === false) {
+                    // username has been changed, new avatar has been set and notifications are set to false
+                    console.log('photo url = ' + 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid);
+                    console.log('The username of the user = '+username);
+                    firebaseRef.update({
+                        displayName: username,
+                        photoURL: 'gs://feadr-develop.appspot.com/avatars/'+this.userObject.uid,
+                       // notification: '',
+                    });
+                    // eslint-disable-next-line
+                } else if(typeof username !== 'undefined' && this.changes.imageUpload === false && this.notification === false) {
+                    // username has been changed, new avatar has not been set and notifications are set to false
+                    console.log('The username of the user = '+username);
+                    firebaseRef.update({
+                        displayName: username,
+                    });
+                } else if(typeof username === 'undefined' && this.changes.imageUpload === true && this.notification === true) {
+                    // username has not been changed, new avatar has been set and notifications are set to true
+                    console.log('The username of the user is not set.');
+                    console.log('The username want notifications.');
+                    console.log('The username uploaded a new avatar using the uid.');
+                    firebaseRef.update({
+                        photoURL: 'gs://feadr-develop.appspot.com/avatars/' + this.userObject.uid,
+                        // notification: '',
+                    });
+                    // eslint-disable-next-line
+                } else if(typeof username !== 'undefined' && this.changes.imageUpload === false && this.notification === false) {
+                    // username has been changed, new avatar has not been set and notifications are set to false
+                    console.log('The username of the user is set.' + username);
+                    console.log('The username want notifications.');
+                    console.log('The username uploaded no new avatar using the uid.');
+                    firebaseRef.update({
+                        displayName: username,
+                        // notification: '',
+                    });
+                    // eslint-disable-next-line
+                } else if(typeof username !== 'undefined' && this.changes.imageUpload === false && this.notification === true) {
+                    // username has been changed, new avatar has not been set and notifications are set to false
+                    console.log('The username of the user is set.' + username);
+                    console.log('The username want notifications.');
+                    console.log('The username uploaded no new avatar using the uid.');
+                    firebaseRef.update({
+                        displayName: username,
+                        // notification: '',
+                    });
+                } else {
+                    console.log('No changes in the settings were made.');
+                }
+
+//                change based on <uid> which is available in the userobject
+                // firebase.database().ref('users/'+this.userObject.uid).set({
+                    // displayName : name to display to users
+
+                    // photoURL : uploaded image
+
+                    // notifications : true or false
+//                });
+            }
+            ready() {
+                super.ready();
+                const app = document.querySelector('feadr-app');
+                this.userObject = app.user;
+                console.log(this.userObject);
+                this.$.avatar.style.backgroundImage = 'url('+this.userObject.photoURL+')';
+            }
+        }
+
+        window.customElements.define(FeadrPageUsersettings.is, FeadrPageUsersettings);
+        </script>
+</dom-module>

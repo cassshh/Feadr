@@ -1,0 +1,317 @@
+<!-- Component imports -->
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+
+<!-- Other Imports -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700|Roboto:400,500" rel="stylesheet">
+<link rel="import" href="../elements/feadr-comment.html">
+<link rel="import" href="../elements/feadr-post-details.html">
+<link rel="import" href="../elements/feadr-post-section.html">
+<link rel="import" href="../elements/feadr-post-footer.html">
+<link rel="import" href="../elements/feadr-add-comment.html">
+<link rel="import" href="../feadr-app/shared-styles.html">
+
+<dom-module id="feadr-page-post">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                margin-bottom: 48px;
+            }
+
+            .card {
+                max-width: 800px;
+                color: black;
+                background-color: #F1F2F3;
+                font-weight: 300;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+                font-family: 'Open Sans', sans-serif;
+            }
+
+            app-header {
+                color: #fff;
+                background-color: #834D9B;
+                margin: 0 auto;
+            }
+
+            app-toolbar {
+                background-color: #834D9B;
+                max-width: 800px;
+                margin: 0 auto;
+
+            }
+
+            .content {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            paper-listbox {
+                display: block;
+            }
+
+            paper-menu-button {
+                padding: 0;
+                --paper-menu-button-dropdown-background: #F5F5F5;
+            }
+
+            paper-item {
+                width: 100px;
+                display: block;
+                padding: 4px 8px 4px 8px;
+                text-align: center;
+                cursor: pointer;
+                color: black;
+            }
+
+            paper-item:hover,
+            paper-item:active,
+            paper-item:focus {
+                background-color: #AEAEAE;
+            }
+
+        </style>
+        <app-header-layout>
+            <app-header slot="header" condenses fixed>
+                <app-toolbar>
+                    <!-- Left icon -->
+                    <paper-icon-button icon="arrow-back"></paper-icon-button>
+                    <!-- right aligned icons -->
+                    <div main-title></div>
+                    <div class="rightIcons">
+                        <paper-icon-button icon="arrow-upward" on-click="_upvotePost"></paper-icon-button>
+                        <paper-icon-button icon="arrow-downward" on-click="_downvotePost"></paper-icon-button>
+                        <paper-icon-button icon="favorite" on-click="_postFavorite"></paper-icon-button>
+                        <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
+                            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                            <paper-listbox slot="dropdown-content">
+                                <paper-item id="edit" on-tap="edit" style="display: none;">Edit</paper-item>
+                                <paper-item id="deleteButton" on-tap="delete" style="display: none;">Delete</paper-item>
+                            </paper-listbox>
+                        </paper-menu-button>
+                    </div>
+                </app-toolbar>
+            </app-header>
+            <!-- Content -->
+            <div class="content">
+                <div class="card">
+                    <feadr-post-details
+                            title="[[post.title]]"
+                            location="[[post.location.name]]"
+                            time="[[post.time]]"
+                            username="[[post.username]]">
+                    </feadr-post-details>
+                    <template is="dom-repeat" items="[[sections]]">
+                        <feadr-post-section
+                                images="[[item.images]]"
+                                text="[[item.text]]">
+                        </feadr-post-section>
+                    </template>
+                    <feadr-post-footer total-comments="[[totalComments]]" votes="[[votes]]"></feadr-post-footer>
+                </div>
+                <div class="postComment">
+                    <feadr-add-comment postid="[[postid]]"></feadr-add-comment>
+                </div>
+                <div class="comments">
+                    <!-- TODO Uncomment template when comments are queried from database -->
+                    <template is="dom-repeat" items="{{key}}" as="key">
+                        <feadr-comment postid="[[postid]]" key="[[key]]"></feadr-comment>
+                    </template>
+                </div>
+            </div>
+        </app-header-layout>
+
+    </template>
+    <script>
+        class FeadrPost extends Polymer.Element {
+            static get is() {
+                return 'feadr-page-post';
+            }
+
+            static get properties() {
+                return {
+                    postid: {
+                        type: String,
+                        observer: '_postidChange',
+                    },
+                    post: {
+                        type: Object,
+                        value: null,
+                        observer: '_postChanged',
+                    },
+                    key: {
+                        type: Array,
+                        value: [],
+                    },
+                    totalComments: {
+                        type: Number,
+                    },
+                    votes: {
+                        type: Number,
+                    },
+                    images: {
+                        type: Array,
+                        value: [],
+                    },
+                    text: {
+                        type: String,
+                    },
+                    sections: {
+                        type: Array,
+                        value: [],
+                    },
+                    listener: Object,
+                };
+            }
+
+            ready() {
+                super.ready();
+                if (!this.postid) {
+                    this.dispatchEvent(new CustomEvent('requestChangePage', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {route: '/404', replace: true},
+                    }));
+                }
+            }
+
+            _postidChange() {
+                this.getData();
+            }
+
+            getData() {
+                this.getPostData();
+                this.getComments();
+            }
+
+            getPostData() {
+                database.ref('posts/' + this.postid).on('value', (snapshot) => {
+                    if (snapshot.val() !== null) {
+                        this.post = snapshot.val();
+                        var pointsPost = database.ref('votes/posts/' + this.postid);
+                        const that = this;
+                        pointsPost.on('value', (snapshot) => {
+                            that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
+                        });
+                        this.sections = [];
+                        for(const s in this.post.content) {
+                            if(s !== null) {
+                                this.push('sections', this.post.content[s]);
+                            }
+                        }
+                        const d1 = new Date();
+                        const d2 = new Date(this.post.time);
+                        const diff = d1 - d2;
+                        /* TODO Better time.
+                         x min, x hours, x days, x weeks, x months, x years...
+                         */
+                        const diffDays = Math.round(diff / (1000 * 3600 * 24));
+                        if
+                        (diffDays === 0) {
+                            this.set('post.time', 'today');
+                        } else if (diffDays === 1) {
+                            this.set('post.time', 'yesterday');
+                        } else {
+                            this.set('post.time', diffDays + ' days ago');
+                        }
+                    } else {
+                        this.dispatchEvent(new CustomEvent('requestChangePage', {
+                            bubbles: true,
+                            composed: true,
+                            detail: {route: '/404', replace: true},
+                        }));
+                    }
+                });
+            }
+
+            _upvotePost() {
+                const app = document.querySelector('feadr-app');
+                const data = {
+                    type_uid: this.postid, // uid of the type
+                    user_uid: app.user.uid,
+                };
+                database.ref('queue/votes/post/upvote').push(data);
+            }
+
+            _downvotePost() {
+                const app = document.querySelector('feadr-app');
+                const data = {
+                    type_uid: this.postid, // uid of the type
+                    user_uid: app.user.uid,
+                };
+                database.ref('queue/votes/post/downvote').push(data);
+            }
+
+            _postFavorite() {
+                const app = document.querySelector('feadr-app');
+                if(app.user.uid) {
+                    const data = {
+                        post_uid: this.postid, // uid of the type
+                    };
+
+                    database.ref('queue/favorites').push(data);
+                }
+            }
+
+            getComments() {
+                database.ref('post_comments/' + this.postid)
+                    .on('value', (snapshot) => {
+                        this.key = [];
+                        if (snapshot.val() !== null) {
+                            snapshot.forEach((childSnapshot) => {
+                                this.push('key', childSnapshot.key);
+                                this.totalComments = this.key.length;
+                            });
+                        }
+                    });
+            }
+
+            delete() {
+                const app = document.querySelector('feadr-app');
+                if (app.user) {
+                    if (this.postid) {
+                        database.ref('queue/posts/remove').push({post_uid: this.postid});
+                    }
+                } else {
+                    console.log('Not signed in');
+                }
+            }
+
+            _postChanged() {
+                const app = document.querySelector('feadr-app');
+                if(app.user && this.post !== null ) {
+                    // user logged in
+                    var edit = this.$.edit;
+                    var deleteButton = this.$.deleteButton;
+                    if(app.user.uid === this.post.user_uid) {
+                        // user created this post
+                        edit.setAttribute('style', 'display: visible');
+                        deleteButton.setAttribute('style', 'display: visible');
+                    } else {
+                        // user is not the creator of this post
+                        edit.setAttribute('style', 'display: none');
+                        deleteButton.setAttribute('style', 'display: none');
+                    }
+                }
+            }
+
+            edit() {
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {route: '/edit-post/' + this.postid},
+                }));
+            }
+        }
+        window.customElements.define(FeadrPost.is, FeadrPost);
+    </script>
+</dom-module>

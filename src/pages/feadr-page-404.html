@@ -1,0 +1,66 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../feadr-app/shared-styles.html">
+
+<dom-module id="feadr-page-404">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                height: calc(100% - 48px);
+            }
+
+            .container {
+                height: 100%;
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: row;
+                padding: 24px;
+            }
+
+            .charlie {
+                background-image: url('../../images/svg/mascotte_charlie.svg');
+                height: 200px;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: contain;
+                flex: 1;
+            }
+
+            .content {
+                text-align: right;
+                opacity: 0.87;
+                flex: 1;
+            }
+        </style>
+        <div class="container">
+            <div class="content">
+                <h1>Error 404</h1>
+                <span>[[error]]</span>
+            </div>
+            <div class="charlie"></div>
+        </div>
+    </template>
+
+    <script>
+        class FeadrError extends Polymer.Element {
+            static get is() {
+                return 'feadr-page-404';
+            }
+
+            static get properties() {
+                return {
+                    error: {
+                        type: String,
+                        value: 'This is not the webpage you are looking for.',
+                    },
+                };
+            }
+        }
+
+        window.customElements.define(FeadrError.is, FeadrError);
+    </script>
+</dom-module>

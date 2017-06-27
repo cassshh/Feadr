@@ -1,0 +1,171 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="feadr-location-input.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="feadr-area-input">
+    <template>
+        <style>
+            .wrapper {
+                overflow: hidden;
+                max-width: 800px;
+                margin: 0 auto;
+                height: 100px;
+            }
+            .locationWrapper {
+                margin-left: 5px;
+                width: 65%;
+                float: left;
+            }
+            #selectorWrapper {
+                width: 30%;
+                float: right;
+            }
+            .box {
+                display: block;
+            }
+            paper-dropdown-menu, paper-listbox {
+                width: 70%;
+            }
+
+            paper-dropdown-menu {
+                height: auto;
+                margin: auto;
+                display: block;
+            }
+
+        </style>
+        <div class="wrapper">
+            <div class="box">
+                <div class="locationWrapper"><feadr-location-input place={{place}} origin="{{origin}}"></feadr-location-input></div>
+                <div id="selectorWrapper" style="visibility:hidden;"><paper-dropdown-menu label="Area selector">
+                    <paper-listbox slot="dropdown-content" selected="{{selectedArea}}">
+                        <paper-item>Route</paper-item>
+                        <paper-item>City</paper-item>
+                        <paper-item>Neighbourhood</paper-item>
+                        <paper-item>Locality</paper-item>
+                        <paper-item>Province</paper-item>
+                        <paper-item>Country</paper-item>
+                        <paper-item>Postal</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+        class FeadrAreaInput extends Polymer.Element {
+            static get is() {
+                return 'feadr-area-input';
+            }
+
+            static get properties() {
+                return {
+                    selectedArea: {
+                        type: Number,
+                        value: 2,
+                        observer: '_getNewData',
+                    },
+                    origin: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                        observer: '_originChanged',
+                    },
+                    location: {
+                        type: String,
+                        value: '',
+                        notify: true,
+                        readOnly: false,
+                    },
+                    areaselect: {
+                        type: String,
+                        value: '',
+                        notify: true,
+                        readOnly: false,
+                    },
+                    place: {
+                        type: Object,
+                        observer: '_placeChanged',
+                    },
+                };
+            }
+
+            ready() {
+                super.ready();
+                // alert('hello');
+            }
+
+            _originChanged() {
+                if(this.origin !== null) {
+                    console.log('the origin value now equals: ' + this.origin.location);
+                }
+            }
+            _placeChanged() {
+                // console.log(this.place);
+                if(this.place !== null) {
+                    if (this.place.hasOwnProperty('long')) {
+                        this.$.selectorWrapper.style.visibility = 'visible';
+                        console.log(this.place);
+                        this.origin = {location: true};
+                        fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='
+                            + this.place.lat + ','
+                            // eslint-disable-next-line
+                            + this.place.long + '&key=AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg').then((fetchedData) => {
+                            if (fetchedData.status !== 200) {
+                                console.log('Something went wrong with resolving the geolocation');
+                            }
+                            return fetchedData.json();
+                        }).then((data) => {
+                            console.log(data);
+                            if(this.selectedArea === 0) {
+                                console.log(this.selectedArea+1);
+                                this.location = data.results[0].address_components[this.selectedArea+1].long_name;
+                            } else {
+                                console.log(this.selectedArea);
+                                this.location = data.results[0].address_components[this.selectedArea].long_name;
+                            }
+                        });
+                    }
+                    else {
+                        this.$.selectorWrapper.style.visibility = 'hidden';
+                        this.origin = {location: false};
+                        console.log(this.place.formatted_address);
+                        this.location = this.place.formatted_address;
+                        // console.log(this.place);
+                    }
+                }
+            }
+
+            _getNewData(newIndex) {
+                switch(newIndex) {
+                    case 0:
+                        this.areaselect = 'route';
+                        break;
+                    case 1:
+                        this.areaselect = 'locality';
+                        break;
+                    case 2:
+                        this.areaselect = 'neighbourhood';
+                        break;
+                    case 3:
+                        this.areaselect = 'administrative_area_level_2';
+                        break;
+                    case 4:
+                        this.areaselect = 'administrative_area_level_1';
+                        break;
+                    case 5:
+                        this.areaselect = 'country';
+                        break;
+                    case 6:
+                        this.areaselect = 'postal_code';
+                        break;
+
+                }
+            }
+        }
+        window.customElements.define(FeadrAreaInput.is, FeadrAreaInput);
+    </script>
+</dom-module>

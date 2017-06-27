@@ -1,0 +1,138 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/google-apis/google-maps-api.html">
+<dom-module id="feadr-location-input">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            #inputLocation {
+                width: 90%;
+                display: inline-block;
+            }
+
+            #locationIcon {
+                margin-bottom: -10px;
+                width: 5%;
+                cursor: pointer;
+            }
+
+            paper-input {
+                --paper-input-container-focus-color: #544475;
+            }
+        </style>
+
+        <google-maps-api id="maps" api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg" libraries="places"
+                         on-api-load="_onApiLoad" language="en-us"></google-maps-api>
+        <paper-input
+                id="inputLocation"
+                on-value-changed="_resetLocation"
+                invalid="{{invalid}}"
+                disabled$="[[disabled]]"
+                autofocus="[[autofocus]]"
+                label="Location"
+                placeholder="Search for a location"
+                required$="[[required]]"
+                error-message="Enter valid location">
+        </paper-input>
+        <img id="locationIcon" alt="LocationIcon" on-click="_getLocation" src="../../images/svg/location.svg"/>
+    </template>
+</dom-module>
+<script>
+    class FeadrLocationInput extends Polymer.Element {
+        static get is() {
+            return 'feadr-location-input';
+        }
+
+        static get properties() {
+            return {
+                place: {
+                    type: Object,
+                    value: null,
+                    notify: true,
+                },
+                currentLocation: {
+                    type: Object,
+                    value: null,
+                    notify: true,
+                },
+                disabled: {
+                    type: Boolean,
+                    default: false,
+                },
+                required: {
+                    type: Boolean,
+                    default: false,
+                },
+                invalid: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                },
+                locationName: {
+                    type: String,
+                    notify: true,
+                    observer: '_locationNameChanged',
+                },
+                mapsApiKey: String,
+                label: String,
+                autofocus: Boolean,
+            };
+        }
+
+        _resetLocation() {
+            if (this.place) {
+                this.place = null;
+            }
+        }
+
+        _onApiLoad() {
+            const input = this.$.inputLocation;
+            // eslint-disable-next-line
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            // eslint-disable-next-line
+            google.maps.event.addListener(autocomplete, 'place_changed', () => {
+                const place = autocomplete.getPlace();
+
+            if (!place.geometry) {
+                // Message no location selected
+                input.invalid = true;
+                return;
+            }
+            input.invalid = false;
+            this.place = place;
+        });
+        }
+
+        _getLocation() {
+            const input = this.$.inputLocation;
+            console.log('clicked get location');
+            new Promise((resolve, reject) => {
+                if (navigator.geolocation) {
+                    console.log('trying to resolve promise');
+                    navigator.geolocation.getCurrentPosition(resolve);
+                }
+                else {
+                    input.value = 'Geolocation is not supoorted by this browser';
+                    reject('Something went wrong');
+                }
+            }).then((result) => {
+                console.log('Got Coordinates ');
+                this.place = {lat: result.coords.latitude, long: result.coords.longitude};
+            }, (err) => {
+                console.log(err);
+            });
+        }
+
+        _locationNameChanged() {
+            const input = this.$.inputLocation;
+            if(this.locationName !== null) {
+                input.value = this.locationName;
+            }
+        }
+    }
+
+    window.customElements.define(FeadrLocationInput.is, FeadrLocationInput);
+</script>

@@ -1,0 +1,128 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="feadr-post-overview.html">
+
+<dom-module id="feadr-profile-favorites">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: calc(100% - 48px);
+            }
+            .content {
+                margin: 0 auto;
+                max-width: 800px;
+                margin-bottom: 48px;
+            }
+            .post {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+            }
+            #list {
+                @apply (--layout-flex);
+                --iron-list-items-container: {
+                    max-width: 800px;
+                    margin: 0 auto;
+                };
+            }
+        </style>
+
+        <div class="content">
+            <div class="posts">
+                <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">
+                    <template>
+                        <feadr-post-overview class="post"
+                                             on-tap="handleTap"
+                                             key$="[[post.key]]"
+                                             title$="[[post.val.title]]"
+                                             username$="[[post.val.username]]"
+                                             location$="[[post.val.location.name]]"
+                                             time$="[[post.val.time]]"
+                                             points$="[[post.val.points]]"
+                                             thumbnail$="[[post.val.thumbnail]]">
+                        </feadr-post-overview>
+                    </template>
+                </iron-list>
+            </div>
+        </div>
+
+    </template>
+    <script>
+        /** @polymerElement */
+        class FeadrProfileFavorites extends Polymer.Element {
+            static get is() {
+                return 'feadr-profile-favorites';
+            }
+
+            static get properties() {
+                return {
+                    posts: {
+                        type: Array,
+                        value: [],
+                        notify: true,
+                    },
+                };
+            }
+            ready() {
+                super.ready();
+                this.getFavoritePosts();
+            }
+
+            getFavoritePosts() {
+                const app = document.querySelector('feadr-app');
+                if (app.user) {
+                    //eslint-disable-next-line
+                    const faveRef = database.ref('user_favorites/' + app.user.uid + '/posts');
+                    faveRef.once('value', (snapshot) => {
+                        if (!snapshot.val()) {
+                         // No favorites
+                        }
+                    });
+                    faveRef.on('child_added', (snapshot) => {
+                        database.ref('overview/' + snapshot.key).on('value', (post) => {
+                        const index = this.getIndexOf(post);
+                        if (index >= 0) {
+                            // Update post if exists
+                            this.set('posts.' + index, {
+                                key: post.key,
+                                val: post.val(),
+                            });
+                        } else {
+                            this.push('posts', {
+                                key: post.key,
+                                val: post.val(),
+                            });
+                        }
+                        database.ref('users/' + post.val().user_uid).on('value', (user) => {
+                            this.set('posts.' + this.getIndexOf(post) + '.val.username',
+                                user.val().displayName);
+                        });
+                        database.ref('votes/posts/' + snapshot.key).on('value', (votes) => {
+                            this.set('posts.' + this.getIndexOf(post) + '.val.points',
+                                votes.val().upvotes - votes.val().downvotes);
+                        });
+                      });
+                    });
+                }
+            }
+            getIndexOf(snapshot) {
+                for (let i = 0; i < this.posts.length; i++) {
+                    if (this.posts[i].key === snapshot.key) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            handleTap(e) {
+                const key = e.target.getAttribute('key');
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {route: '/post/' + key},
+                }));
+            }
+        }
+
+        window.customElements.define(FeadrProfileFavorites.is, FeadrProfileFavorites);
+    </script>
+</dom-module>

@@ -2,10 +2,20 @@
   "entrypoint": "index.html",
   "shell": "src/feadr-app/feadr-app.html",
   "fragments": [
+    "src/pages/feadr-page-404.html",
+    "src/pages/feadr-page-overview.html",
+    "src/pages/feadr-page-add-post.html",
+    "src/pages/feadr-page-post.html",
+    "src/pages/feadr-page-discover.html",
+    "src/pages/feadr-page-edit-post.html",
+    "src/pages/feadr-page-profile.html",
+    "src/pages/feadr-page-login.html",
+    "src/pages/feadr-page-usersettings.html"
   ],
   "sources": [
     "src/**/*",
     "images/**/*",
+    "scripts/**/*",
     "bower.json"
   ],
   "extraDependencies": [

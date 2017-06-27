@@ -1,0 +1,199 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chip-input.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chip.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../elements/feadr-add-post.html">
+
+<dom-module id="feadr-page-edit-post">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+            }
+
+            app-header {
+                color: #fff;
+                background-color: #834D9B;
+                margin: 0 auto;
+            }
+
+            app-toolbar {
+                background-color: #834D9B;
+                max-width: 800px;
+                margin: 0 auto;
+
+            }
+
+            .content {
+                max-width: 800px;
+                margin: 0 auto 48px;
+            }
+
+            #submitBtn {
+                background-color: #544274;
+            }
+        </style>
+        <app-header-layout>
+            <app-header slot="header" condenses fixed>
+                <app-toolbar>
+                    <!-- Left icon -->
+                    <paper-icon-button icon="close"></paper-icon-button>
+                    <!-- right aligned icons -->
+                    <div main-title></div>
+                    <div class="rightIcons">
+                        <paper-button id="submitBtn" type="submit" on-click="_editPost">Edit</paper-button>
+                    </div>
+                </app-toolbar>
+            </app-header>
+            <!-- Content -->
+            <div class="content">
+                <feadr-add-post title="{{title}}" place="{{place}}" text="{{text}}"
+                                images="{{images}}" tags="{{tags}}" location-name="{{locationName}}" edited-images="{{editedImages}}"></feadr-add-post>
+            </div>
+        </app-header-layout>
+    </template>
+
+    <script>
+        class FeadrPageEditPost extends Polymer.Element {
+            static get is() {
+                return 'feadr-page-edit-post';
+            }
+
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'feadr-page-edit-post',
+                    },
+                    postid: {
+                        type: String,
+                        notify: true,
+                        observer: '_postidChange',
+                    },
+                    title: {
+                        type: String,
+                        notify: true,
+                    },
+                    place: {
+                        type: Object,
+                        notify: true,
+                    },
+                    text: {
+                        type: String,
+                        notify: true,
+                    },
+                    images: {
+                        type: Object,
+                        notify: true,
+                    },
+                    editedImages: {
+                        type: Object,
+                        notify: true,
+                    },
+                    tags: {
+                        type: Array,
+                        notify: true,
+                    },
+                    locationName: {
+                        type: String,
+                        notify: true,
+                    },
+                };
+            }
+
+            _editPost() {
+                const app = document.querySelector('feadr-app');
+                // TEMP EDITING CODE
+                if (app.user) {
+                    var title = this.title;
+                    var location = this.place;
+                    var text = this.text;
+                    var tags = this.tags;
+                    var images = this.editedImages;
+                    firebase.database().ref('posts/' + this.postid).update({
+                        title: title,
+                    });
+
+                    firebase.database().ref('posts/' + this.postid +
+                    '/content/section1').update({
+                        images: images,
+                        text: text,
+                    });
+                    if(tags !== null) {
+                    firebase.database().ref('posts/' + this.postid).update({
+                        tags: tags,
+                        });
+                    }
+                    if(location !== null) {
+                        firebase.database().ref('posts/' + this.postid).update({
+                            location: {
+                                place_id: location.place_id,
+                                name: location.name,
+                                formatted_address: location.formatted_address,
+                                address_components: location.address_components,
+                                geometry: {
+                                    lng: location.geometry.location.lng(),
+                                    lat: location.geometry.location.lat(),
+                                },
+                            },
+                        });
+
+                        firebase.database().ref('overview/' +this.postid +'/location').update({
+                            place_id: location.place_id,
+                            name: location.name,
+                            formatted_address: location.formatted_address,
+                            address_components: location.address_components,
+                            geometry: {
+                                lng: location.geometry.location.lng(),
+                                lat: location.geometry.location.lat(),
+                            },
+                        });
+                    }
+                    firebase.database().ref('overview/' +this.postid).update({
+                        title: title,
+                    });
+
+
+                    this.dispatchEvent(new CustomEvent('requestChangePage', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {route: '/post/' + this.postid},
+                    }));
+                }
+            }
+            _postidChange() {
+                this.getPostData();
+            }
+
+            getPostData() {
+                // TODO Multiple section support
+                var postDataRef = firebase.database()
+                    .ref('posts/'+ this.postid);
+                postDataRef.once('value', (snapshot) => {
+                        this.title = snapshot.val().title;
+                        this.locationName = snapshot.val().location.formatted_address;
+                        this.tags = snapshot.val().tags;
+                        this.text = snapshot.val().content.section1.text;
+                });
+
+                var contentRef = firebase.database()
+                    .ref('posts/'+ this.postid + '/content/section1/images');
+                contentRef.once('value', (snapshot) => {
+                    this.editedImages = [];
+                    snapshot.forEach((childSnapshot) => {
+                        this.push('editedImages', childSnapshot.val());
+                    });
+                });
+            }
+        }
+        window.customElements.define(FeadrPageEditPost.is, FeadrPageEditPost);
+    </script>
+</dom-module>

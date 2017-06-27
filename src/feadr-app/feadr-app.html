@@ -1,31 +1,379 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/google-apis/google-maps-api.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<!-- import the module  -->
+<link rel="import" href="shared-styles.html">
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">-->
 
 <dom-module id="feadr-app">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <h2>Hello [[prop1]]!</h2>
-  </template>
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                height: 100%;
+            }
 
-  <script>
-    /** @polymerElement */
-    class FeadrApp extends Polymer.Element {
-      static get is() { return 'feadr-app'; }
-      static get properties() {
-        return {
-          prop1: {
-            type: String,
-            value: 'feadr-app',
-          },
-        };
-      }
-    }
+            iron-pages {
+                @apply(--layout-flex);
+            }
 
-    window.customElements.define(FeadrApp.is, FeadrApp);
-  </script>
+            paper-tabs {
+                position: fixed;
+                height: 48px;
+                bottom: 0;
+                width: 100%;
+                background-color: #FFF;
+                --paper-tabs-selection-bar-color: #313131;
+                --paper-tabs-container: {
+                    max-width: 800px;
+                    margin: 0 auto;
+                };
+                --paper-tab-ink: #834D9B;
+            }
+
+            paper-tab[link] a {
+                /* These mixins (from iron-flex-layout) center the link text. */
+                @apply (--layout-horizontal);
+                @apply (--layout-center-center);
+                color: #fff;
+                text-decoration: none;
+            }
+
+            .selected {
+                display: none;
+            }
+
+        </style>
+        <google-maps-api api-key="AIzaSyDj-3e4yAdHW7g6tKt4RPXxvz_NxrNXAOg"
+                         version="3.exp"
+                         on-api-load="_onApiLoad"
+                         language="en-us"></google-maps-api>
+        <app-location route="{{route}}"></app-location>
+        <app-route
+                route="{{route}}"
+                pattern="/:page"
+                data="{{routeData}}"
+                tail="{{subroute}}">
+        </app-route>
+        <app-route
+                route="{{subroute}}"
+                pattern="/:subpage"
+                data="{{subrouteData}}">
+        </app-route>
+        <app-header-layout fullbleed>
+            <iron-pages
+                    attr-for-selected="name"
+                    selected="[[page]]"
+                    fallback-selection="fallback">
+                <feadr-page-overview name="overview" loading="{{loading}}"
+                                     location-state="{{locationState}}"
+                                     location-data="{{locationData}}"></feadr-page-overview>
+                <feadr-page-discover name="discover"></feadr-page-discover>
+                <feadr-page-add-post name="add-post"></feadr-page-add-post>
+                <feadr-page-post name="post" page="[[page]]" postid="{{subpage}}"></feadr-page-post>
+                <feadr-page-edit-post name="edit-post" page="[[page]]" postid="{{subpage}}"></feadr-page-edit-post>
+                <feadr-page-login name="login"></feadr-page-login>
+                <feadr-page-profile name="profile"></feadr-page-profile>
+                <feadr-page-usersettings name="usersettings"></feadr-page-usersettings>
+                <feadr-page-404 name="fallback"></feadr-page-404>
+            </iron-pages>
+            <paper-tabs id="tabs" selected="{{nav}}" align-bottom>
+                <paper-tab name="" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_home_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_home.svg"></iron-icon>
+                </paper-tab>
+                <paper-tab name="discover" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_discover_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_discover.svg"></iron-icon>
+                </paper-tab>
+                <paper-tab name="add-post" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_plus.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_plus.svg"></iron-icon>
+                </paper-tab>
+                <paper-tab name="notifications" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_notification_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_notification.svg"></iron-icon>
+                </paper-tab>
+                <paper-tab name="profile" on-tap="navigate">
+                    <iron-icon class="unselected" src="../../images/svg/nav_profile_stroke.svg"></iron-icon>
+                    <iron-icon class="selected" src="../../images/svg/nav_profile.svg"></iron-icon>
+                </paper-tab>
+            </paper-tabs>
+        </app-header-layout>
+    </template>
+
+    <script>
+        class FeadrApp extends Polymer.Element {
+            static get is() {
+                return 'feadr-app';
+            }
+
+            static get properties() {
+                return {
+                    user: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                    },
+                    loading: {
+                        type: Boolean,
+                        value: true,
+                        notify: true,
+                    },
+                    locationState: {
+                        type: String,
+                        value: null,
+                        notify: true,
+                        observer: '_locationStateChanged',
+                    },
+                    location: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                    },
+                    locationData: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                    },
+                    page: {
+                        type: String,
+                        reflectToAttribute: true,
+                        observer: '_pageChanged',
+                    },
+                    subpage: {
+                        type: String,
+                        reflectToAttribute: true,
+                        observer: '_subpageChanged',
+                    },
+                    rootPattern: String,
+                    nav: {
+                        type: Number,
+                        value: 0,
+                    },
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_routePageChanged(routeData.page)',
+                    '_routeSubPageChanged(subrouteData.subpage)',
+                ];
+            }
+
+            constructor() {
+                super();
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        // User is signed in.
+                        console.log('Signed in');
+                        this.user = user;
+                        if (this.page === 'login') {
+                            this.dispatchEvent(new CustomEvent('requestChangePage', {
+                                detail: {route: '/', replace: true},
+                            }));
+                        }
+                    } else {
+                        // No user is signed in.
+                        console.log('No user');
+                        this.user = null;
+                    }
+                });
+                this.addEventListener('signIn', this.signIn);
+                this.addEventListener('requestChangePage', this._changePage);
+                this.addEventListener('requestLocation', this.getLocation);
+            }
+
+            _onApiLoad() {
+                this.checkLocationPermission();
+            }
+
+            checkLocationPermission() {
+                // Check on permission to avoid direct prompt (unfriendly!!!)
+                navigator.permissions.query({name: 'geolocation'}).then((result) => {
+                    this.locationState = result.state;
+                    result.onchange = () => {
+                        this.locationState = result.state;
+                    };
+                });
+            }
+
+            _locationStateChanged(state) {
+                this.loading = true;
+                if (state === 'granted') {
+                    this.getLocation();
+                } else {
+                    this.loading = false;
+                }
+            }
+
+            getLocation() {
+                if ('geolocation' in navigator) {
+                    navigator.geolocation.getCurrentPosition((location) => {
+                        this.processLocation(location);
+                    });
+                    navigator.geolocation.watchPosition((location) => {
+                        this.processLocation(location);
+                    });
+                } else {
+                    console.log('Geolocation API not supported.');
+                    this.loading = false;
+                }
+            }
+
+            processLocation(location) {
+                if (this.location
+                    && this.location.coords.longitude === location.coords.longitude
+                    && this.location.coords.latitude === location.coords.latitude) {
+                    // Coordinates are the same, so unnecessary to use geocoder
+                    return;
+                }
+                this.location = location;
+                const geocoder = new google.maps.Geocoder;
+                geocoder.geocode({'location': {lat: location.coords.latitude, lng: location.coords.longitude}},
+                    (results, status) => {
+                        if (status === 'OK') {
+                            if (results[1]) {
+                                // 1 is a little more global
+                                this.locationData = results[1];
+                            } else {
+                                console.log('No results found');
+                            }
+                        } else {
+                            console.log('Geocoder failed due to: ' + status);
+                        }
+                        this.loading = false;
+                    });
+            }
+
+            signIn(e) {
+                let provider = null;
+                switch (e.detail.provider) {
+                    case 'google':
+                        provider = new firebase.auth.GoogleAuthProvider();
+                        break;
+                    default:
+                        return;
+                }
+                firebase.auth().signInWithRedirect(provider);
+                firebase.auth().getRedirectResult().then((result) => {
+                    if (result.credential) {
+                        // This gives you a Google Access Token.
+                        // You can use it to access the Google API.
+                        console.log('fireauth token: ' + result.credential.accessToken);
+                    }
+                    // The signed-in user info.
+                    console.log('fireauth user: ' + result.user);
+                }).catch((error) => {
+                    // Handle Erros
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // The email of the user's account used.
+                    const email = error.email;
+                    // The firebase.auth.AuthCredential type that was used.
+                    const credential = error.credential;
+                    console.log('fireauth error: ' + errorCode
+                        + ' ' + errorMessage + ' ' + email + ' ' + credential);
+                });
+            }
+
+            signOut() {
+                firebase.auth().signOut().then(() => {
+                    // Success
+                    console.log('Logged out');
+                }, (error) => {
+                    // Error
+                    console.log('Logout error: ' + error);
+                });
+            }
+
+            navigate(e) {
+                let name = e.target.getAttribute('name');
+                if (name === null) {
+                    // Pressed icon, so get parents value.
+                    name = e.target.parentElement.getAttribute('name');
+                }
+                // Replace so one back-press quits app. Instead of overflowing the history
+                this.dispatchEvent(new CustomEvent('requestChangePage', {
+                    detail: {route: '/' + name, replace: true},
+                }));
+            }
+
+            updateBottomNav(e) {
+                let i;
+                switch (e) {
+                    case 'overview':
+                        i = 0;
+                        break;
+                    case 'discover':
+                        i = 1;
+                        break;
+                    case 'add-post':
+                        i = 2;
+                        break;
+                    case 'notifications':
+                        i = 3;
+                        break;
+                    case 'profile':
+                        i = 4;
+                        break;
+                    default:
+                        i = -1;
+                }
+                this.nav = i;
+            }
+
+            _changePage(e) {
+                console.log('requested new page');
+                // this.set('route.path', e.detail.route);
+                if (e.detail.replace) {
+                    window.history.replaceState({}, null, e.detail.route);
+                } else {
+                    window.history.pushState({}, null, e.detail.route);
+                }
+                window.dispatchEvent(new CustomEvent('location-changed'));
+            }
+
+            _routePageChanged(page) {
+                if (page === undefined) {
+                    return;
+                }
+                this.page = page || 'overview';
+            }
+
+            _routeSubPageChanged(subpage) {
+                this.subpage = subpage;
+            }
+
+            _pageChanged(page, oldPage) {
+                console.log('_pageChanged: ' + page + ' | ' + oldPage);
+                this.updateBottomNav(page);
+                // Load page import on demand. Show 404 page if fails
+                const link = '../pages/feadr-page-' + page + '.html';
+                const resolvedPageUrl = this.resolveUrl(link);
+                Polymer.importHref(
+                    resolvedPageUrl,
+                    null,
+                    this._showPage404.bind(this),
+                    true);
+            }
+
+            _subpageChanged(subpage, oldSubpage) {
+                console.log('_subpageChanged: ' + subpage + ' | ' + oldSubpage);
+            }
+
+            _showPage404() {
+                this.page = '404';
+            }
+        }
+
+        window.customElements.define(FeadrApp.is, FeadrApp);
+    </script>
 </dom-module>

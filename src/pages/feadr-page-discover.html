@@ -1,0 +1,252 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../elements/feadr-post-overview.html">
+<link rel="import" href="../elements/feadr-area-input.html">
+<link rel="import" href="../elements/feadr-search-tags.html">
+<link rel="import" href="../feadr-app/shared-styles.html">
+<!--TODO When changing the location make the list appear empty-->
+<dom-module id="feadr-page-discover">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                height: calc(100% - 48px);
+                --paper-input-container-focus-color: #544475;
+            }
+
+            #list {
+                @apply (--layout-flex);
+                --iron-list-items-container: {
+                    max-width: 800px;
+                    margin: 0 auto;
+                };
+            }
+
+            .post {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+            }
+
+            .content {
+                margin: 0 auto;
+                max-width: 800px;
+                margin-bottom: 48px;
+            }
+
+            .topSearchBar {
+                overflow: hidden;
+                max-width: 800px;
+                margin: 0 auto;
+                height: 100px;
+            }
+
+            .searchBar {
+                float: left;
+                width: 70%;
+            }
+
+            .switchButton {
+                float: right;
+                margin-top: 10px;
+            }
+
+            paper-button {
+                width: 35px;
+                color: white;
+                background-color: #544475;
+            }
+        </style>
+        <iron-location id="ironLocation"></iron-location>
+        <div class="topSearchBar">
+            <div class="searchBar">
+                <feadr-search-tags id="tagInput" tag="{{tag}}"></feadr-search-tags>
+                <feadr-area-input id="areaInput" style="display: none;" location="{{area}}" areaselect="{{type}}"
+                                  reference="{{reference}}" origin="{{origin}}"></feadr-area-input>
+            </div>
+            <div class="switchButton">
+                <!-- Temp switch button -->
+                <paper-button on-tap="changeSearchBar">
+                    <iron-icon icon="autorenew"></iron-icon>
+                </paper-button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="posts">
+                <iron-list id="list" items="{{posts}}" as="post" scroll-target="document">
+                    <template>
+                        <feadr-post-overview class="post"
+                                             on-tap="handleTap"
+                                             key$="[[post.key]]"
+                                             title$="[[post.val.title]]"
+                                             username$="[[post.val.username]]"
+                                             location$="[[post.val.location.name]]"
+                                             time$="[[post.val.time]]"
+                                             points$="[[post.val.points]]"
+                                             thumbnail$="[[post.val.thumbnail]]">
+                        </feadr-post-overview>
+                    </template>
+                </iron-list>
+            </div>
+        </div>
+    </template>
+    <script>
+        class FeadrDiscover extends Polymer.Element {
+            static get is() {
+                return 'feadr-page-discover';
+            }
+
+            static get properties() {
+                return {
+                    posts: {
+                        type: Array,
+                        value: [],
+                        notify: true,
+                    },
+                    origin: {
+                        type: Object,
+                        value: null,
+                        notify: true,
+                    },
+                    location: {
+                        type: String,
+                    },
+                    areaselect: {
+                        type: String,
+                    },
+                    currentBar: {
+                        type: String,
+                        value: 'tag',
+                    },
+                    tag: {
+                        type: String,
+                        observer: 'tagChanged',
+                    },
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_changedType(type, area, reference)',
+                ];
+            }
+
+            handleTap(e) {
+                const key = e.target.getAttribute('key');
+                this.$.ironLocation.set('path', '/post/' + key);
+            }
+
+            _changedType(type, area) {
+                console.log(type + ' and ' + area);
+                if (type.length > 0 && area.length > 0) {
+                    if (this.origin.location === false) {
+                        let array = area.split(',');
+                        // console.log(array);
+                        switch (array.length) {
+                            case 1:
+                                // Country
+                                console.log('Reached Case 1');
+                                type = 'country';
+                                area = array[0];
+                                break;
+                            case 2:
+                                // Province
+                                console.log('Reached Case 2');
+                                type = 'administrative_area_level_1';
+                                area = array[0];
+                                break;
+                            case 3:
+                                // Route
+                                console.log('Reached Case 3');
+                                type = 'route';
+                                area = array[0];
+                                break;
+                            case 4:
+                                // postal_code
+                                type = 'route';
+                                console.log('Reached Case 4');
+                                area = array[0];
+                                break;
+                            case 5:
+                                console.log('Reached Case 5');
+                                area = array[0];
+                                break;
+                        }
+                    }
+                    console.log('location/' + type + '/' + area + '/posts/');
+//                 eslint-disable-next-line
+                    database.ref('location/' + type + '/' + area + '/posts/').on('child_added', (snapshot) => {
+                        console.log(snapshot.val());
+                        this.push('posts', {
+                            key: snapshot.key,
+                            val: snapshot.val(),
+                        });
+                    })
+                    ;
+                    console.log(this.posts);
+                }
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            changeSearchBar() {
+                var locationBar = this.$.areaInput;
+                var tagsBar = this.$.tagInput;
+
+                if (this.currentBar === 'tag') {
+                    locationBar.setAttribute('style', 'display: visible');
+                    tagsBar.setAttribute('style', 'display: none');
+                    this.currentBar = 'location';
+                } else if (this.currentBar === 'location') {
+                    locationBar.setAttribute('style', 'display: none');
+                    tagsBar.setAttribute('style', 'display: visible');
+                    this.currentBar = 'tag';
+                }
+            }
+
+            tagChanged() {
+                // Get posts based on tag
+                this.splice('posts', 0, this.posts.length);
+                // TODO Notify ironlist to update it with new data
+                this.notifySplices('posts', this.posts);
+                this.posts = [];
+                //eslint-disable-next-line
+                database.ref('tags/' + this.tag + '/posts').once('value', (snapshot) => {
+                    snapshot.forEach((childSnapshot) => {
+                        database.ref('overview/' + childSnapshot.key).on('value', (post) => {
+                            const index = this.getIndexOf(post);
+                            if (index >= 0) {
+                                // Update post if exists
+                                this.set('posts.' + index, {
+                                    key: post.key,
+                                    val: post.val(),
+                                });
+                            } else {
+                                this.push('posts', {
+                                    key: post.key,
+                                    val: post.val(),
+                                });
+                            }
+                        });
+                    });
+                });
+            }
+
+            getIndexOf(snapshot) {
+                for (let i = 0; i < this.posts.length; i++) {
+                    if (this.posts[i].key === snapshot.key) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+        }
+        window.customElements.define(FeadrDiscover.is, FeadrDiscover);
+    </script>
+</dom-module>

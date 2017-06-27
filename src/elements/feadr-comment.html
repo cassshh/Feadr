@@ -1,0 +1,324 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<dom-module id="feadr-comment">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            .card {
+                max-width: 800px;
+                color: black;
+                background-color: #f1f2f3;
+                font-weight: 300;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Comment Header */
+            .commentHeader {
+                width: 100%;
+                display: table;
+            }
+
+            .userName {
+                width: 70%;
+                display: table-cell;
+                padding-left: 12px;
+                padding-top: 8px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Open Sans', sans-serif;
+                color: #834D9B;
+            }
+
+            .timePost {
+                width: 30%;
+                display: table-cell;
+                text-align: right;
+                padding-right: 12px;
+                padding-top: 8px;
+                font-size: 12px;
+                font-weight: 600;
+                opacity: 0.54;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
+            }
+
+            .text {
+                width: 90%;
+                padding-left: 12px;
+                font-size: 14px;
+                font-weight: 400;
+                opacity: 0.87;
+                text-align: justify;
+                font-family: 'Roboto', sans-serif;
+                color: #000000;
+            }
+
+            .actionFooter {
+                width: 100%;
+                display: inline-block;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .commentFooter {
+                width: 100%;
+                display: inline-block;
+                padding: 10px;
+                text-align: justify;
+                font-size: 12px;
+                font-weight: 600;
+                opacity: 0.87;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
+            }
+
+            .leftActions {
+                display: inline-block;
+                float: left;
+                width: auto;
+            }
+
+            .centerActions {
+                display: inline-block;
+                text-align: justify;
+                text-align-last: center;
+                width: 100%;
+                vertical-align: center;
+            }
+
+            .rightActions {
+                display: inline-block;
+                float: right;
+                width: auto;
+            }
+
+            .votes, .subComments, .expand, .respondButton, .moreButton, .upvoteButton, .downvoteButton {
+                display: inline-block;
+                margin-right: 15px;
+            }
+
+            iron-icon {
+                height: 12px;
+                top: 50%;
+                bottom: 50%;
+                color: #000000;
+            }
+
+            .paperBtn {
+                --iron-icon-height: 5px;
+                --iron-icon-width: 5px;
+            }
+
+            paper-icon-button {
+                height: 30px;
+                width: 30px;
+                color: #000000;
+            }
+        </style>
+
+        <div id="card" class="card" on-click="_commentSelected">
+            <div class="commentHeader">
+                <div class="userName">
+                    [[userName]]Harr Matey
+                </div>
+                <div class="timePost">
+                    [[postTime]]
+                </div>
+            </div>
+            <div class="text">
+                [[commentText]]
+            </div>
+            <div class="actionFooter" id="actionFooter" style="display: none;">
+                <div class="leftActions">
+                    <div class="upvoteButton">
+                        <paper-icon-button class="paperBtn" on-click="_upvoteComment"
+                                           src="../../images/svg/upvote_stroke_gray.svg"></paper-icon-button>
+                    </div>
+                    <div class="downvoteButton">
+                        <paper-icon-button on-click="_downvoteComment" class="paperBtn"
+                                           src="../../images/svg/downvote_stroke_gray.svg"></paper-icon-button>
+                    </div>
+                </div>
+                <div class="rightActions">
+                    <div class="respondButton">
+                        <paper-icon-button on-click="_stopPropagation" src="../../images/svg/reply_gray.svg"></paper-icon-button>
+                    </div>
+                    <div class="moreButton">
+                        <paper-icon-button on-click="_stopPropagation" src="../../images/svg/more_gray.svg"></paper-icon-button>
+                    </div>
+                </div>
+            </div>
+            <div class="commentFooter">
+                <div class="centerActions">
+                    <div class="votes">
+                        [[votes]]
+                        <iron-icon src="../../images/svg/upvote_fill_gray.svg"></iron-icon>
+                            </span>
+                    </div>
+                    <div class="expand">
+                        <iron-icon id="expandIcon" src="../../images/svg/collapse_gray.svg" style="width: 12px;"></iron-icon>
+                    </div>
+                    <div class="subComments">
+                        <iron-icon src="../../images/svg/comment_fill_gray.svg"></iron-icon>
+                        5
+                    </div>
+                    <template is="dom-if" if="{{OP}}">
+                        <div class="subComments">
+                            <iron-icon icon="delete" on-click="_deleteComment"></iron-icon>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+    </template>
+    <script>
+        /** @polymerElement */
+        class FeadrComment extends Polymer.Element {
+            static get is() {
+                return 'feadr-comment';
+            }
+
+            static get properties() {
+                return {
+                    postid: {
+                        type: String,
+                    },
+                    commentText: {
+                        type: String,
+                        value: 'Dit is een placeholder voor de text van een comment',
+                    },
+                    userName: {
+                        type: String,
+                        value: 'UserName',
+                    },
+                    user_uid: {
+                        type: String,
+                        value: null,
+                        observer: '_isOP',
+                    },
+                    postTime: {
+                        type: String,
+                        value: '1d ago',
+                    },
+                    votes: {
+                        type: Number,
+                    },
+                    comment: {
+                        type: Array,
+                    },
+                    key: {
+                        type: String,
+                        observer: '_keyChanged',
+                    },
+                    OP: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    commentSelected: {
+                        type: Boolean,
+                        value: false,
+                    },
+                };
+            }
+
+            _keyChanged() {
+                this._getData();
+            }
+
+            _getData() {
+                var that = this;
+                var commentDataRef = database
+                    .ref('post_comments/' + this.postid + '/' + that.key);
+                commentDataRef.on('value', function(snapshot) {
+                    if (snapshot.val() !== null) {
+                        that.commentText = snapshot.val().text;
+                        that.userName = snapshot.val().user;
+                                                var pointsComment = database.ref('votes/comments/' + that.key);
+                        pointsComment.on('value', (snapshot) => {
+                            that.votes = snapshot.val().upvotes - snapshot.val().downvotes;
+                        });
+                        that.user_uid = snapshot.val().user_uid;
+                    }
+                });
+            }
+
+            _upvoteComment() {
+                this._stopPropagation();
+                const app = document.querySelector('feadr-app');
+                const data = {
+                    type_uid: this.key, // uid of the type
+                    user_uid: app.user.uid,
+                };
+                database.ref('queue/votes/comment/upvote').push(data);
+            }
+
+            _downvoteComment() {
+                this._stopPropagation();
+                const app = document.querySelector('feadr-app');
+                const data = {
+                    type_uid: this.key, // uid of the type
+                    user_uid: app.user.uid,
+                };
+                database.ref('queue/votes/comment/downvote').push(data);
+            }
+
+            _commentSelected() {
+                var footer = this.$.actionFooter;
+                var expandIcon = this.$.expandIcon;
+                var card = this.$.card;
+                if (this.commentSelected === false) {
+                    this.commentSelected = true;
+                    footer.setAttribute('style', 'display:visible;');
+                    expandIcon.setAttribute('src', '../../images/svg/expand_gray.svg');
+                    card.setAttribute('style', 'background-color: #ecedef;');
+                } else {
+                    this.commentSelected = false;
+                    footer.setAttribute('style', 'display:none;');
+                    expandIcon.setAttribute('src', '../../images/svg/collapse_gray.svg');
+                    card.setAttribute('style', 'background-color: #f1f2f3;');
+                }
+            }
+
+            _isOP(OP) {
+                const app = document.querySelector('feadr-app');
+                if (this.user_uid) {
+                    if (app.user.uid === this.user_uid) {
+                        this.OP = true;
+                        return OP;
+                    } else {
+                        this.OP = false;
+                        return OP;
+                    }
+                }
+            }
+
+            _deleteComment() {
+                this._stopPropagation();
+                const app = document.querySelector('feadr-app');
+                if (app.user.uid === this.user_uid) {
+                    const postid = this.postid;
+                    const key = this.key;
+                    let data;
+                    data = {
+                        post_uid: postid,
+                        comment_uid: key,
+                    };
+                    database.ref('/queue/comments/remove').push(data);
+                }
+            }
+
+            _stopPropagation() {
+                event.stopPropagation();
+            }
+        }
+
+        window.customElements.define(FeadrComment.is, FeadrComment);
+    </script>
+</dom-module>

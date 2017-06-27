@@ -1,0 +1,82 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/l2t-paper-slider/l2t-paper-slider.html">
+<!-- import conditional template -->
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<dom-module id="feadr-post-section">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            .text {
+                padding: 10px;
+                text-align: justify;
+                font-size: 13px;
+                font-weight: 600;
+                opacity: 0.84;
+                font-family: 'Open Sans', sans-serif;
+                color: #000000;
+            }
+
+            iron-image {
+                width: 100%;
+                --iron-image-width: 100%;
+                overflow: hidden;
+            }
+
+            l2t-paper-slider:focus{
+                outline: none;
+            }
+
+        </style>
+
+        <div class="postContent">
+            <!-- TODO If image exists show the image container, else hide it -->
+              <template is="dom-if" if="{{images}}">
+                <l2t-paper-slider total-slides={{images.length}}  style="overflow: hidden; cursor:default">
+                    <template is="dom-repeat" items="{{images}}" as="item">
+                        <paper-slide style="overflow:hidden;">
+                            <iron-image
+                                    style="height: 100%; width: 100%; max-width:800px; height:100%; max-height:800px; cursor:default"
+                                    sizing="contain"
+                                    src$="[[item]]">
+                            </iron-image>
+                        </paper-slide>
+                    </template>
+                </l2t-paper-slider>
+            </template>
+
+            <template is="dom-if" if="[[text]]">
+                <div class="text">[[text]]</div>
+            </template>
+        </div>
+
+
+    </template>
+    <script>
+        /** @polymerElement */
+        class FeadrPostSection extends Polymer.Element {
+            static get is() {
+                return 'feadr-post-section';
+            }
+
+            static get properties() {
+                return {
+                    images: {
+                        type: Array,
+                        value: [],
+                    },
+                    text: {
+                        type: String,
+                        value: 'Spongebob Squirtpants',
+                    },
+                };
+            }
+        }
+
+        window.customElements.define(FeadrPostSection.is, FeadrPostSection);
+    </script>
+</dom-module>

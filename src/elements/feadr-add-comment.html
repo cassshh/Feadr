@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+
+<dom-module id="feadr-add-comment">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .card {
+                max-width: 800px;
+
+                padding-top: 10px;
+                color: black;
+                background-color: #F1F2F3;
+                font-weight: 300;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+
+            .commentContainer {
+                background-color: #F1F2F3;
+                display: block;
+                padding-bottom: 10px;
+                text-align: center;
+            }
+
+            .input {
+                width: 60%;
+                display: inline-block;
+                position: relative;
+            }
+
+            .commentBtnContainer {
+                margin-left: 10px;
+                display: inline-block;
+                vertical-align: middle;
+                position: relative;
+                width: 28px;
+                height: 28px;
+                background-color: #834D9B;
+                border-radius: 5px;
+                padding: 8px;
+            }
+
+            .sendIcon {
+                width: 28px;
+                height: 28px;
+            }
+
+            paper-textarea {
+                --paper-input-container-color: #834D9B;
+                --paper-input-container-focus-color: #834D9B;
+                text-align: left;
+            }
+        </style>
+
+        <div class="card">
+            <div class="commentContainer">
+                <div class="comment">
+                    <div class="input">
+                        <paper-textarea no-label-float id="textarea" placeholder="Leave a comment"></paper-textarea>
+                    </div>
+                    <div class="commentBtnContainer" on-click="_postComment">
+                        <paper-ripple></paper-ripple>
+                        <img class="sendIcon" alt="SendIcon" src="../../images/svg/send_white.svg"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        class FeadrAddComment extends Polymer.Element {
+            static get is() {
+                return 'feadr-add-comment';
+            }
+
+            static get properties() {
+                return {
+                    postid: {
+                        type: String,
+                    },
+                };
+            }
+
+            _postComment() {
+                var text = this.$.textarea.value;
+                const app = document.querySelector('feadr-app');
+                if (app.user) {
+                    if (this.$.textarea.value) {
+                        let data;
+                        data = {
+                            post_uid: this.postid,
+                            text: text,
+                            time: firebase.database.ServerValue.TIMESTAMP,
+                            user_uid: app.user.uid,
+                            username: app.user.displayName,
+                        };
+
+                        database.ref('/queue/comments/create').push(data);
+                        this.$.textarea.value = null;
+                    }
+                }
+            }
+        }
+
+        window.customElements.define(FeadrAddComment.is, FeadrAddComment);
+    </script>
+</dom-module>
