@@ -105,6 +105,7 @@
             <div class="content">
                 <div class="card">
                     <feadr-post-details
+                            avatar="[[avatar]]"
                             title="[[post.title]]"
                             location="[[post.location.name]]"
                             time="[[post.time]]"
@@ -169,6 +170,10 @@
                         type: Array,
                         value: [],
                     },
+                    avatar: {
+                        type: String,
+                        value: null,
+                    },
                     listener: Object,
                 };
             }
@@ -197,6 +202,15 @@
                 database.ref('posts/' + this.postid).on('value', (snapshot) => {
                     if (snapshot.val() !== null) {
                         this.post = snapshot.val();
+                        const ref = database.ref('users/' + this.post.user_uid);
+                        ref.once('value', (snapshot) => {
+                            if (!snapshot.val()) {
+                                this.avatar = null;
+                            } else {
+                                this.avatar = snapshot.val().photoURL;
+                            }
+                        });
+                        console.log(this.avatar);
                         var pointsPost = database.ref('votes/posts/' + this.postid);
                         const that = this;
                         pointsPost.on('value', (snapshot) => {
