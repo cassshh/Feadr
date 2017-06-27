@@ -38,11 +38,14 @@
 
     <!-- Load and register pre-caching Service Worker -->
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service-worker.js');
-        });
-      }
+        // Load and register pre-caching Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js', {
+                    scope: '/',
+                });
+            });
+        }
     </script>
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
