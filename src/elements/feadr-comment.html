@@ -125,7 +125,7 @@
         <div id="card" class="card" on-click="_commentSelected">
             <div class="commentHeader">
                 <div class="userName">
-                    [[userName]]Harr Matey
+                    [[userName]]
                 </div>
                 <div class="timePost">
                     [[postTime]]
@@ -239,7 +239,7 @@
                 commentDataRef.on('value', function(snapshot) {
                     if (snapshot.val() !== null) {
                         that.commentText = snapshot.val().text;
-                        that.userName = snapshot.val().user;
+                        that.userName = snapshot.val().username;
                                                 var pointsComment = database.ref('votes/comments/' + that.key);
                         pointsComment.on('value', (snapshot) => {
                             that.votes = snapshot.val().upvotes - snapshot.val().downvotes;

@@ -13,6 +13,7 @@
         padding-top: 10px;
         padding-left: 16px;
         padding-right: 16px;
+        padding-bottom: 10px;
         display: flex;
         flex-direction: row;
       }
@@ -85,14 +86,13 @@
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;
-        background-image: url('http://i.imgur.com/6FS0nIp.jpg');
       }
     </style>
 
     <div class="userHeader">
       <div class="profilePictureContainer">
         <div class="profilePicture">
-          <div class="picture"></div>
+          <div class="picture"><img class="picture" src="[[avatar]]" alt="avatar"/></div>
         </div>
       </div>
       <div class="postInfoContainer">
@@ -123,6 +123,10 @@
           time: {
             type: String,
             value: 'now',
+          },
+          avatar: {
+            type: String,
+            value: null,
           },
           username: {
             type: String,
